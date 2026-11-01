@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Kids - Khám Phá Thế Giới Kỳ Diệu</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        science: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            cyan: '#06b6d4',
+                            blue: '#0284c7',
+                            emerald: '#10b981',
+                            accent: '#f59e0b',
+                            pink: '#ec4899',
+                            light: '#f8fafc'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Lexend', 'Inter', 'Segoe UI', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Lexend & Inter & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Lexend', 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.25);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 25px rgba(2, 132, 199, 0.4);
+            transform: translateY(-4px);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-science-cyan selection:text-science-900">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-science-blue via-science-cyan to-science-emerald flex items-center justify-center shadow-lg shadow-science-cyan/30">
+                    <i data-lucide="atom" class="w-7 h-7 text-white animate-spin-slow"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300 bg-clip-text text-transparent tracking-tight">Science Kids</span>
+                    <span class="block text-xs font-bold text-sky-400 tracking-wider uppercase">Khám Phá Thế Giới Kỳ Diệu</span>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md relative hidden md:block">
+                <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Tìm câu hỏi vì sao... (vd: mây, cầu vồng, sao quay)" class="w-full pl-11 pr-4 py-3 rounded-full bg-slate-800/90 border border-slate-700/80 text-base text-slate-100 placeholder-slate-400 focus:outline-none focus:border-science-cyan focus:ring-2 focus:ring-science-cyan/30 transition-all">
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="switchTab('home')" id="navHomeBtn" class="p-3 rounded-2xl bg-science-cyan/20 border border-science-cyan/40 text-science-cyan transition-all flex items-center gap-2 text-base font-bold">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span class="hidden lg:inline">Bài Học</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="navQuizBtn" class="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all flex items-center gap-2 text-base font-bold">
+                    <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
+                    <span class="hidden lg:inline">Trắc Nghiệm</span>
+                </button>
+                <button onclick="openRandomArticle()" class="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 transition-all flex items-center gap-2 text-base font-bold" title="Bài viết ngẫu nhiên">
+                    <i data-lucide="shuffle" class="w-5 h-5"></i>
+                    <span class="hidden xl:inline">Ngẫu Nhiên</span>
+                </button>
+                <button onclick="toggleAiTutorModal()" class="p-3 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-science-blue hover:from-purple-500 hover:to-indigo-500 text-white transition-all shadow-lg shadow-purple-500/25 flex items-center gap-2 text-base font-extrabold">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
+                    <span class="hidden sm:inline">Hỏi Dr. Spark</span>
+                </button>
+                <button onclick="toggleBookmarksModal()" class="relative p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all flex items-center gap-2">
+                    <i data-lucide="bookmark" class="w-5 h-5 text-amber-400"></i>
+                    <span id="bookmarkCount" class="absolute -top-1 -right-1 bg-amber-500 text-slate-950 font-black text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-md">0</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Search Input -->
+        <div class="px-4 pb-3 md:hidden">
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInputMobile" oninput="handleSearchMobile()" placeholder="Tìm kiếm bài học khoa học..." class="w-full pl-10 pr-4 py-2.5 rounded-full bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-science-cyan">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        
+        <!-- TAB 1: THƯ VIỆN BÀI VIẾT -->
+        <div id="articlesTab" class="space-y-12">
+            <!-- Hero Banner -->
+            <section class="relative rounded-3xl overflow-hidden glass-card p-6 sm:p-10 lg:p-12 border border-slate-700/60 shadow-2xl">
+                <div class="absolute -right-10 -top-10 w-96 h-96 bg-science-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-10 -bottom-10 w-96 h-96 bg-science-blue/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 max-w-3xl space-y-5">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-science-cyan/15 border border-science-cyan/40 text-science-cyan text-sm font-extrabold uppercase tracking-wider">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        Dành Cho Các Nhà Khoa Học Nhí Tò Mò
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
+                        Giải mã 15 bí ẩn kỳ diệu <br><span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent">vũ trụ & tự nhiên quanh em</span>
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
+                        Mỗi câu hỏi "Vì sao?" là một chìa khóa mở ra thế giới kiến thức rực rỡ. Hãy chọn bài viết ưa thích để khám phá bài giảng chi tiết, tự làm thí nghiệm vui tại nhà và đấu trí trắc nghiệm nhé!
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <a href="#articleGrid" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-science-blue to-science-cyan hover:from-sky-500 hover:to-cyan-400 text-white font-extrabold text-base shadow-xl shadow-science-cyan/20 transition-all flex items-center gap-2">
+                            <span>Khám phá bài học</span>
+                            <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                        </a>
+                        <button onclick="switchTab('quiz')" class="px-6 py-3 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 font-extrabold text-base transition-all flex items-center gap-2">
+                            <i data-lucide="trophy" class="w-5 h-5"></i>
+                            <span>Đấu Trắc Nghiệm</span>
+                        </button>
+                        <button onclick="toggleAiTutorModal()" class="px-6 py-3 rounded-2xl bg-purple-600/30 text-purple-300 border border-purple-500/40 hover:bg-purple-600/40 font-extrabold text-base transition-all flex items-center gap-2">
+                            <i data-lucide="bot" class="w-5 h-5"></i>
+                            <span>Hỏi Dr. Spark</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Category Filters -->
+            <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+                        <i data-lucide="compass" class="w-7 h-7 text-science-cyan"></i>
+                        Chủ đề khoa học
+                    </h2>
+                    <span id="articleCounter" class="text-sm sm:text-base text-slate-300 font-semibold">Hiển thị 15/15 bài viết</span>
+                </div>
+
+                <div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none" id="categoryButtons">
+                    <!-- Categories injected via JS -->
+                </div>
+            </section>
+
+            <!-- Articles Grid -->
+            <section id="articleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <!-- 15 Articles injected via JavaScript -->
+            </section>
+
+            <!-- Empty state -->
+            <div id="emptyState" class="hidden text-center py-16 space-y-4 glass-card rounded-3xl">
+                <i data-lucide="search-x" class="w-16 h-16 text-slate-500 mx-auto"></i>
+                <h3 class="text-2xl font-bold text-slate-300">Không tìm thấy bài viết phù hợp</h3>
+                <p class="text-slate-400 text-base">Thử lại với từ khóa khác như "bầu trời", "cầu vồng", "mèo", "đom đóm"...</p>
+                <button onclick="resetFilters()" class="px-6 py-3 bg-science-blue rounded-2xl text-white font-bold text-base">Xem tất cả bài viết</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: MỤC TRẮC NGHIỆM TỔNG HỢP (QUIZ HUB) -->
+        <div id="quizTab" class="hidden space-y-8">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl border border-slate-700/60 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                    <i data-lucide="trophy" class="w-64 h-64 text-amber-400"></i>
+                </div>
+                <div class="max-w-2xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-400 text-sm font-extrabold uppercase">
+                        <i data-lucide="award" class="w-4 h-4"></i> Đấu Trí Khoa Học
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-white">Thử Thách Trắc Nghiệm Khoa Học Nhí</h2>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                        Chọn cấp độ phù hợp để kiểm tra vốn hiểu biết, duy trì chuỗi trả lời đúng (Streak) và chinh phục Huy Hiệu Giáo Sư Nhí!
+                    </p>
+                </div>
+
+                <!-- Level Select Cards -->
+                <div id="quizLevelSelect" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <div onclick="startQuizMode('easy')" class="glass-card p-6 sm:p-8 rounded-3xl border border-emerald-500/40 hover:border-emerald-400 cursor-pointer transition-all hover:-translate-y-2 space-y-4 group">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform">
+                            1
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Nhà Khám Phá Nhí</h3>
+                            <p class="text-slate-300 text-sm mt-1">5 câu hỏi ngẫu nhiên • Không tính thời gian</p>
+                        </div>
+                        <span class="inline-block px-3.5 py-1.5 bg-emerald-500/15 text-emerald-400 text-xs font-bold rounded-xl border border-emerald-500/30">Cấp Độ Dễ</span>
+                    </div>
+
+                    <div onclick="startQuizMode('medium')" class="glass-card p-6 sm:p-8 rounded-3xl border border-sky-500/40 hover:border-sky-400 cursor-pointer transition-all hover:-translate-y-2 space-y-4 group">
+                        <div class="w-14 h-14 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform">
+                            2
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Khoa Học Tập Sự</h3>
+                            <p class="text-slate-300 text-sm mt-1">10 câu hỏi thử thách • 20 giây mỗi câu</p>
+                        </div>
+                        <span class="inline-block px-3.5 py-1.5 bg-sky-500/15 text-sky-400 text-xs font-bold rounded-xl border border-sky-500/30">Cấp Độ Vừa</span>
+                    </div>
+
+                    <div onclick="startQuizMode('hard')" class="glass-card p-6 sm:p-8 rounded-3xl border border-purple-500/40 hover:border-purple-400 cursor-pointer transition-all hover:-translate-y-2 space-y-4 group">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-transform">
+                            3
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Giáo Sư Nhí Super</h3>
+                            <p class="text-slate-300 text-sm mt-1">Trọn bộ 15 câu hỏi • 15 giây đếm ngược</p>
+                        </div>
+                        <span class="inline-block px-3.5 py-1.5 bg-purple-500/15 text-purple-400 text-xs font-bold rounded-xl border border-purple-500/30">Cấp Độ Khó</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Play Arena -->
+            <div id="quizArena" class="hidden glass-card p-6 sm:p-10 rounded-3xl border border-slate-700/80 space-y-8">
+                <!-- Quiz Header Progress -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-5">
+                    <div class="flex items-center gap-3">
+                        <span id="quizBadgeLevel" class="px-4 py-1.5 rounded-full text-xs font-extrabold uppercase bg-science-cyan/20 text-science-cyan border border-science-cyan/30">
+                            Nhà Khám Phá Nhí
+                        </span>
+                        <span id="quizStreak" class="text-sm font-extrabold text-amber-400 flex items-center gap-1.5 bg-amber-500/10 px-3 py-1 rounded-xl">
+                            <i data-lucide="flame" class="w-4 h-4"></i> Streak: 0
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div id="quizTimerBox" class="flex items-center gap-2 font-mono text-base text-amber-400 font-extrabold bg-slate-800 px-4 py-1.5 rounded-2xl border border-amber-500/30">
+                            <i data-lucide="timer" class="w-5 h-5"></i> <span id="quizTimeLeft">20</span>s
+                        </div>
+                        <span id="quizProgressText" class="text-base font-extrabold text-slate-200">Câu 1/5</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Progress Bar -->
+                <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                    <div id="quizProgressBar" class="h-full bg-gradient-to-r from-science-blue via-science-cyan to-emerald-400 rounded-full w-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- Question -->
+                <div class="space-y-4 py-2">
+                    <h3 id="quizQuestionText" class="text-2xl sm:text-3xl font-bold text-white leading-relaxed"></h3>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="quizArenaOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Quiz Arena Footer Feedback -->
+                <div id="quizArenaFeedback" class="hidden p-5 rounded-2xl text-base font-bold flex items-center justify-between gap-4">
+                    <div id="quizFeedbackContent" class="flex items-center gap-3"></div>
+                    <button onclick="nextQuizQuestion()" class="px-6 py-3 rounded-2xl bg-science-cyan text-slate-950 font-black text-base hover:bg-cyan-300 transition-colors shrink-0">
+                        Câu tiếp theo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Result Summary -->
+            <div id="quizResultSummary" class="hidden glass-card p-8 sm:p-12 rounded-3xl border border-slate-700 text-center space-y-6 max-w-2xl mx-auto">
+                <div class="w-28 h-28 mx-auto rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 flex items-center justify-center shadow-2xl shadow-amber-500/30">
+                    <i data-lucide="award" class="w-14 h-14 text-slate-950"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-3xl font-black text-white">Chúc Mừng Em Đã Hoàn Thành!</h3>
+                    <p id="quizScoreText" class="text-slate-200 text-xl font-bold">Em đạt 80/100 điểm</p>
+                </div>
+                <div id="quizBadgeAward" class="p-5 rounded-2xl bg-slate-800/90 border border-amber-500/40 text-amber-300 font-extrabold text-base sm:text-lg">
+                    🏆 Huy Hiệu Nhận Được: Nhà Khoa Học Siêu Trí Tuệ!
+                </div>
+                <div class="flex justify-center gap-4 pt-2">
+                    <button onclick="resetQuizHub()" class="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-base">
+                        Làm lại lượt khác
+                    </button>
+                    <button onclick="switchTab('home')" class="px-6 py-3 rounded-2xl bg-science-cyan text-slate-950 font-bold text-base">
+                        Về trang bài học
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ARTICLE DETAIL MODAL (LARGE TYPOGRAPHY & FULL FEATURES) -->
+    <div id="articleModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 hidden">
+        <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity" onclick="closeArticleModal()"></div>
+        
+        <div class="relative w-full max-w-4xl max-h-[92vh] bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl overflow-y-auto z-10 flex flex-col">
+            <!-- Modal Header Image -->
+            <div class="relative h-64 sm:h-80 w-full shrink-0 overflow-hidden">
+                <img id="modalImage" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                
+                <button onclick="closeArticleModal()" class="absolute top-4 right-4 p-3 rounded-full bg-slate-900/80 text-slate-300 hover:text-white border border-slate-700 transition-all shadow-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="absolute bottom-5 left-6 right-6 space-y-2">
+                    <span id="modalCategory" class="px-3.5 py-1 rounded-full bg-science-cyan/20 border border-science-cyan/40 text-science-cyan font-extrabold text-xs uppercase tracking-wider">Category</span>
+                    <h2 id="modalTitle" class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">Title</h2>
+                </div>
+            </div>
+
+            <!-- Modal Body Content -->
+            <div class="p-6 sm:p-10 space-y-8 flex-grow">
+                
+                <!-- Action Controls: Speech Read & Bookmark -->
+                <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80">
+                    <button id="speechBtn" onclick="toggleSpeechRead()" class="flex items-center gap-2.5 text-sm sm:text-base font-extrabold text-science-cyan hover:text-cyan-300 transition-colors">
+                        <i data-lucide="volume-2" class="w-6 h-6"></i>
+                        <span id="speechText">Đọc bài học giọng nói</span>
+                    </button>
+
+                    <button id="modalBookmarkBtn" onclick="" class="flex items-center gap-2.5 text-sm sm:text-base font-extrabold text-amber-400 hover:text-amber-300 transition-colors">
+                        <i data-lucide="bookmark" class="w-6 h-6"></i>
+                        <span id="modalBookmarkText">Lưu bài viết</span>
+                    </button>
+                </div>
+
+                <!-- Detailed Explanation Section (FONT SIZE text-lg / text-xl) -->
+                <div class="space-y-4">
+                    <h3 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-amber-400"></i>
+                        Giải thích khoa học siêu dễ hiểu
+                    </h3>
+                    <div id="modalExplanation" class="text-slate-200 text-lg sm:text-xl leading-relaxed space-y-4 font-normal"></div>
+                </div>
+
+                <!-- Experiment Section -->
+                <div class="p-6 rounded-3xl bg-slate-800/70 border border-slate-700/80 space-y-3">
+                    <h3 class="text-lg sm:text-xl font-extrabold text-science-cyan flex items-center gap-2.5">
+                        <i data-lucide="flask-conical" class="w-6 h-6 text-science-cyan"></i>
+                        Thử nghiệm nhỏ tại nhà
+                    </h3>
+                    <div id="modalExperiment" class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal"></div>
+                </div>
+
+                <!-- Flashcard Section -->
+                <div class="p-6 rounded-3xl bg-gradient-to-r from-cyan-950/50 via-slate-800 to-slate-800 border border-science-cyan/40 space-y-2">
+                    <span class="text-xs font-black text-science-cyan uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Thẻ ghi nhớ thần kỳ
+                    </span>
+                    <p id="modalFlashcard" class="text-white font-bold text-base sm:text-lg italic leading-relaxed"></p>
+                </div>
+
+                <!-- "DID YOU KNOW?" Special Box -->
+                <div class="p-6 rounded-3xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                    <span class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> ✦ BẠN CÓ BIẾT?
+                    </span>
+                    <p id="modalDidYouKnow" class="text-amber-100 font-semibold text-base sm:text-lg leading-relaxed"></p>
+                </div>
+
+                <!-- Individual Article Mini-Quiz Section -->
+                <div class="p-6 rounded-3xl bg-slate-800/90 border border-slate-700 space-y-5">
+                    <h3 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2.5">
+                        <i data-lucide="help-circle" class="w-6 h-6 text-pink-400"></i>
+                        Thử tài nhà khoa học nhí
+                    </h3>
+                    <p id="modalQuizQuestion" class="text-base sm:text-lg font-bold text-slate-100 leading-relaxed"></p>
+                    <div id="modalQuizOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    <div id="modalQuizFeedback" class="hidden text-base font-bold p-4 rounded-2xl"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- AI TUTOR "DR. SPARK" MODAL -->
+    <div id="aiTutorModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 hidden">
+        <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity" onclick="toggleAiTutorModal()"></div>
+        
+        <div class="relative w-full max-w-3xl h-[88vh] bg-slate-900 border border-purple-500/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-800 bg-slate-900/95 flex items-center justify-between">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                        <i data-lucide="bot" class="w-7 h-7 text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-white flex items-center gap-2">
+                            Giáo Viên AI Dr. Spark
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        </h3>
+                        <p class="text-xs text-purple-300 font-semibold">Trợ lý AI thông minh giải đáp mọi thắc mắc thế giới</p>
+                    </div>
+                </div>
+                <button onclick="toggleAiTutorModal()" class="p-2.5 rounded-2xl bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Chat Messages Log -->
+            <div id="chatMessages" class="flex-grow overflow-y-auto p-6 space-y-5">
+                <div class="flex items-start gap-3.5">
+                    <div class="w-9 h-9 rounded-2xl bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0 border border-purple-500/40">
+                        <i data-lucide="bot" class="w-5 h-5"></i>
+                    </div>
+                    <div class="bg-slate-800/90 border border-slate-700/80 rounded-3xl rounded-tl-none p-5 text-base sm:text-lg text-slate-200 leading-relaxed max-w-[88%] space-y-2">
+                        Xin chào bạn nhỏ! Thầy là <strong>Dr. Spark</strong> 🚀. Thầy ам hiểu tường tận mọi bí mật từ lòng đại dương cho tới vũ trụ bao la! Em có thắc mắc gì hôm nay muốn hỏi thầy không?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="px-6 py-2 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto scrollbar-none text-xs sm:text-sm">
+                <span class="text-slate-400 font-bold shrink-0">Gợi ý:</span>
+                <button onclick="sendQuickQuestion('Tại sao nước biển lại mặn hả thầy?')" class="px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 whitespace-nowrap font-medium transition-all">
+                    🌊 Vì sao biển mặn?
+                </button>
+                <button onclick="sendQuickQuestion('Trái Đất quay rất nhanh sao ta không ngã?')" class="px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 whitespace-nowrap font-medium transition-all">
+                    🌍 Trái Đất quay không ngã?
+                </button>
+                <button onclick="sendQuickQuestion('Tại sao chim lại bay được mà người không bay được?')" class="px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 whitespace-nowrap font-medium transition-all">
+                    🐦 Vì sao chim bay được?
+                </button>
+            </div>
+
+            <!-- Chat Input Box -->
+            <div class="p-4 border-t border-slate-800 bg-slate-900">
+                <form id="aiChatForm" onsubmit="handleAiChatSubmit(event)" class="flex items-center gap-3">
+                    <input type="text" id="aiChatInput" placeholder="Hỏi Dr. Spark bất cứ câu gì (vd: hello, sao trời tối, v.v.)..." class="flex-grow px-5 py-3.5 rounded-2xl bg-slate-800 border border-slate-700 text-base text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 transition-all">
+                    <button type="submit" id="aiSendBtn" class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-base flex items-center gap-2 transition-all shrink-0 shadow-lg shadow-purple-600/30">
+                        <span>Gửi</span>
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookmarks Drawer Modal -->
+    <div id="bookmarksModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+        <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm" onclick="toggleBookmarksModal()"></div>
+        <div class="relative w-full max-w-2xl bg-slate-900 border border-slate-700/80 rounded-3xl shadow-2xl p-6 sm:p-8 z-10 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                <h3 class="text-2xl font-black text-white flex items-center gap-2.5">
+                    <i data-lucide="bookmark" class="w-6 h-6 text-amber-400"></i>
+                    Bài viết đã lưu yêu thích
+                </h3>
+                <button onclick="toggleBookmarksModal()" class="p-2.5 rounded-2xl bg-slate-800 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="bookmarksList" class="overflow-y-auto space-y-4 flex-grow pr-1">
+                <!-- Bookmarked articles injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800 glass-nav py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-science-blue to-science-cyan flex items-center justify-center">
+                    <i data-lucide="atom" class="w-6 h-6 text-white"></i>
+                </div>
+                <span class="text-xl font-black text-white">Science Kids</span>
+            </div>
+            <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto">
+                Khơi nguồn đam mê khoa học và tính tò mò khám phá thế giới cho trẻ em Việt Nam mỗi ngày.
+            </p>
+            <div class="text-slate-500 text-xs sm:text-sm">
+                © 2026 Science Kids - Khám Phá Thế Giới Kỳ Diệu. Built for curious young minds.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Core -->
+    <script>
+        // FULL 15 DETAILED SCIENTIFIC ARTICLES WITH HIGH-QUALITY UNSPLASH IMAGES
+        const articles = [
+            {
+                id: 1,
+                title: "Tại sao bầu trời lại có màu xanh dương vào ban ngày?",
+                category: "Vũ Trụ & Trái Đất",
+                image: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=1200&q=80",
+                summary: "Ánh nắng Mặt Trời chứa đủ dải màu cầu vồng, nhưng ánh sáng màu xanh dương lại nhảy múa tán xạ khắp bầu trời nhất!",
+                explanation: `
+                    <p><strong>1. Ánh sáng Mặt Trời là một cầu vồng ẩn giấu:</strong> Nhìn bằng mắt thường, ánh nắng Mặt Trời có màu trắng dịu hoặc vàng nhạt. Nhưng thực chất, chùm ánh sáng đó bao gồm 7 màu sắc chính ghép lại: Đỏ, Cam, Vàng, Lục, Lam (Xanh dương), Chàm, Tím - hệt như một chiếc cầu vồng!</p>
+                    <p><strong>2. Bầu khí quyển Trái Đất đầy những chướng ngại vật:</strong> Bao quanh Trái Đất là lớp khí quyển chứa hàng tỉ tỉ phân tử khí Nitơ, Ôxy và các hạt bụi nhỏ li ti. Khi chùm ánh sáng Mặt Trời đi vào bầu khí quyển, các tia sáng phải "vượt rào" qua hàng triệu chướng ngại vật này.</p>
+                    <p><strong>3. Hiện tượng Tán xạ Rayleigh kỳ diệu:</strong> Tia sáng màu đỏ và vàng có bước sóng dài nên dễ dàng vượt qua các phân tử khí mà không bị lệch hướng. Trong khi đó, tia sáng màu xanh dương có bước sóng ngắn nên liên tục đâm sầm vào các phân tử khí và bị "văng tung xoe" ra khắp mọi hướng (gọi là tán xạ Rayleigh). Do ánh sáng xanh nhảy múa khắp không trung, mắt chúng ta nhìn đâu trên bầu trời cũng thấy một màu xanh ngút ngàn!</p>
+                `,
+                experiment: "🧪 <strong>Thí nghiệm ly nước đổi màu:</strong> Đổ đầy nước vào ly thủy tinh trong suốt, nhỏ 2-3 giọt sữa tươi vào khuấy đều. Bật đèn pin chiếu chùm sáng qua ly. Khi nhìn ngang góc vuông với tia đèn, bạn sẽ thấy ly nước tỏa ánh xanh nhẹ giống hệt cơ chế bầu trời!",
+                flashcard: "💡 Tán xạ Rayleigh: Bầu trời màu xanh dương là do ánh sáng xanh bị các phân tử không khí đâm trúng và tán xạ ra khắp mọi hướng.",
+                didYouKnow: "Hoàng hôn có màu đỏ rực là vì lúc chiều tà, Mặt Trời ở rất xa. Ánh sáng xanh bị tán xạ mất hết trên đường đi dài, chỉ còn các tia sáng màu đỏ bước sóng dài xuyên qua tới được mắt chúng ta!",
+                quiz: {
+                    question: "Tia sáng màu nào bị các phân tử không khí tán xạ mạnh nhất khiến bầu trời có màu xanh?",
+                    options: ["Màu Đỏ", "Màu Xanh Dương", "Màu Vàng", "Màu Xanh Lá"],
+                    correct: 1
+                }
+            },
+            {
+                id: 2,
+                title: "Tại sao chiếc lông vũ rơi cùng tốc độ với đá trong chân không?",
+                category: "Vật Lý Kỳ Diệu",
+                image: "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=1200&q=80",
+                summary: "Bình thường lông vũ rơi chậm hơn vì bị không khí cản lại, nhưng trong môi trường chân không chúng tiếp đất cùng lúc!",
+                explanation: `
+                    <p><strong>1. Trọng lực hút mọi vật như nhau:</strong> Nhà khoa học thiên tài Galileo Galilei đã chứng minh rằng: Lực hấp dẫn của Trái Đất kéo tất cả mọi vật nặng hay nhẹ rơi xuống với cùng một gia tốc rơi tự do không đổi.</p>
+                    <p><strong>2. "Kẻ phá bĩnh" mang tên Lực cản không khí:</strong> Hòn đá nặng rơi nhanh hơn chiếc lông vũ ở môi trường bình thường không phải vì lực hútTrái Đất thiên vị hòn đá, mà do không khí xung quanh chúng ta! Chiếc lông vũ có diện tích bề mặt lớn so với trọng lượng nên bị các hạt không khí bên dưới "đẩy ngược" lại rất mạnh.</p>
+                    <p><strong>3. Sự thật ngỡ ngàng trong môi trường Chân không:</strong> Nếu chúng ta hút sạch toàn bộ không khí ra khỏi một ống thủy tinh lớn (tạo thành môi trường chân không), lực cản sẽ trở về số 0. Lúc này, khi thả rơi đồng thời một hòn đá nặng và một chiếc lông vũ nhẹ nhẹ, chúng sẽ rơi song song và chạm đáy ống chính xác cùng một tích tắc!</p>
+                `,
+                experiment: "🧪 <strong>Thí nghiệm tờ giấy & cuốn sách:</strong> Đặt một tờ giấy phẳng lên trên trang bìa một cuốn sách dày. Thả rơi cuốn sách thẳng đứng. Tờ giấy sẽ rơi nhanh bằng và cập đất cùng lúc với cuốn sách vì cuốn sách đã cản hết không khí bên dưới!",
+                flashcard: "💡 Trong môi trường chân không (không có không khí), mọi vật dù nặng hay nhẹ đều rơi với tốc độ hoàn toàn bằng nhau!",
+                didYouKnow: "Năm 1971, nhà hành tinh học David Scott trên tàu Apollo 15 đã thả rơi một chiếc búa và một chiếc lông chim trên Mặt Trăng (nơi không có không khí) và cả hai đã chạm bề mặt Mặt Trăng cùng lúc trước sự chứng kiến của toàn thế giới!",
+                quiz: {
+                    question: "Yếu tố nào làm chiếc lông vũ rơi chậm hơn hòn đá trong bầu khí quyển Trái Đất?",
+                    options: ["Trọng lực Trái Đất yếu hơn", "Lực cản của không khí", "Hình dáng chiếc lông màu trắng", "Gió thổi từ trên xuống"],
+                    correct: 1
+                }
+            },
+            {
+                id: 3,
+                title: "Tại sao sau cơn mưa lại xuất hiện cầu vồng 7 màu?",
+                category: "Vật Lý Kỳ Diệu",
+                image: "https://images.unsplash.com/photo-1508624217470-5ef0f947d8be?auto=format&fit=crop&w=1200&q=80",
+                summary: "Mỗi giọt nước mưa lơ lửng trong không trung đóng vai trò như một lăng kính bẻ cong và bẻ tách ánh sáng trắng!",
+                explanation: `
+                    <p><strong>1. Giọt nước mưa là chiếc lăng kính tí hon:</strong> Khi cơn mưa vừa tạnh và Mặt Trời hửng sáng, trong không khí vẫn còn đọng lại hàng triệu giọt nước mưa li ti bay lơ lửng. Mỗi giọt nước này hoạt động hệt như một chiếc lăng kính bằng thủy tinh.</p>
+                    <p><strong>2. Khúc xạ và Phản xạ ánh sáng:</strong> Khi tia sáng trắng Mặt Trời đi vào trong giọt nước, nó bị bẻ cong đi (hiện tượng khúc xạ). Tia sáng tiếp tục đập vào mặt sau của giọt nước và nảy ngược trở lại (hiện tượng phản xạ nội phần).</p>
+                    <p><strong>3. Tán sắc tạo nên 7 dải màu lộng lẫy:</strong> Vì các màu sắc cấu tạo nên ánh sáng trắng bị bẻ cong theo các góc độ khác nhau (màu Tím bị bẻ cong nhiều nhất, màu Đỏ bị bẻ cong ít nhất), chùm ánh sáng trắng bị tách rời ra thành dải màu liên tục: Đỏ, Cam, Vàng, Lục, Lam, Chàm, Tím cong vút trên bầu trời!</p>
+                `,
+                experiment: "🧪 **Tự tạo cầu vồng bằng đĩa CD:** Dùng một chiếc đĩa CD cũ soi dưới ánh nắng Mặt Trời hoặc ánh đèn pin, bạn sẽ thấy ngay một dải cầu vồng rực rỡ phản chiếu lên trần nhà!",
+                flashcard: "💡 Tán sắc ánh sáng: Cầu vồng xuất hiện khi vô số giọt nước mưa bẻ cong và phân tách ánh sáng trắng thành 7 màu.",
+                didYouKnow: "Cầu vồng thực ra là một vòng tròn hoàn chỉnh! Tuy nhiên, khi đứng trên mặt đất, chúng ta bị đường chân trời che mất một nửa nên chỉ nhìn thấy nó có dạng hình cung tròn mà thôi!",
+                quiz: {
+                    question: "Những giọt nước mưa trong không khí đóng vai trò gì để tạo nên cầu vồng?",
+                    options: ["Làm nguồn thắp sáng", "Như các lăng kính bẻ cong và tách ánh sáng", "Như những gương phẳng soi bóng", "Như các cục băng lạnh"],
+                    correct: 1
+                }
+            },
+            {
+                id: 4,
+                title: "Tại sao mắt mèo lại phát sáng lung linh trong đêm tối?",
+                category: "Động Vật & Tự Nhiên",
+                image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1200&q=80",
+                summary: "Phía sau mắt mèo có một lớp màng tế bào tráng gương giúp phản chiếu và nhân đôi lượng ánh sáng thu nhận!",
+                explanation: `
+                    <p><strong>1. Lớp màng gương Tapetum Lucidum:</strong> Mắt mèo sở hữu một cấu tạo sinh học vô cùng đặc biệt. Nằm ngay đằng sau võng mạc của chúng là một lớp màng tế bào mỏng tráng gương có tên khoa học là <em>Tapetum Lucidum</em> (nghĩa là "thảm ánh sáng").</p>
+                    <p><strong>2. Cơ chế nhân đôi ánh sáng đêm:</strong> Khi có chút ánh sáng yếu ớt ban đêm chiếu vào mắt mèo, lớp màng Tapetum Lucidum sẽ hoạt động như một chiếc gương soi, dội ngược chùm ánh sáng đó quay trở lại võng mạc lần thứ hai. Điều này giúp mắt mèo tận dụng triệt để lượng ánh sáng dù là nhỏ nhất.</p>
+                    <p><strong>3. Lý do mắt mèo rực sáng:</strong> Khi ánh sáng phản quang dội ngược ra ngoài qua đồng tử, chúng ta sẽ nhìn thấy đôi mắt mèo rực sáng lên như hai hòn ngọc huyền bí hay hai chiếc đèn pha tí hon trong đêm!</p>
+                `,
+                experiment: "🧪 **Thí nghiệm dải phản quang:** Dùng đèn pin chiếu vào biển báo giao thông hoặc miếng dải phản quang trên áo bảo hộ vào ban đêm, bạn sẽ thấy chúng sáng rực lên tương tự cơ chế lớp màng mắt mèo!",
+                flashcard: "💡 Tapetum Lucidum: Lớp màng tráng gương sau mắt mèo giúp phản chiếu ánh sáng để mèo nhìn siêu rõ trong bóng tối.",
+                quiz: {
+                    question: "Lớp màng tế bào dạng gương tráng sau mắt mèo có tên khoa học là gì?",
+                    options: ["Tapetum Lucidum", "Retina Optic", "Cornea Glass", "Pupil Dark"],
+                    correct: 0
+                }
+            },
+            {
+                id: 5,
+                title: "Trái Đất quay rất nhanh, tại sao chúng ta không bị văng ra ngoài?",
+                category: "Vũ Trụ & Trái Đất",
+                image: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&w=1200&q=80",
+                summary: "Lực hấp dẫn khổng lồ của Trái Đất giữ chặt vạn vật, đồng thời bầu khí quyển cũng quay đồng tốc độ với chúng ta!",
+                explanation: `
+                    <p><strong>1. Tốc độ quay chóng mặt của Trái Đất:</strong> Bạn có biết Trái Đất của chúng ta đang tự quay quanh trục với tốc độ kinh hoàng: hơn 1.600 km/h ở đường xích đạo! Tốc độ này nhanh hơn cả một chiếc máy bay phản lực siêu thanh.</p>
+                    <p><strong>2. Lực Hấp Dẫn - "Bàn tay siêu nhân" ôm chặt vạn vật:</strong> Chúng ta không bị văng ra ngoài vũ trụ nhờ Trọng Lực (Lực Hấp Dẫn) khổng lồ do khối lượng Trái Đất tạo ra. Lực này liên tục kéo con người, nhà cửa, biển cả và mọi vật thể chặt về phía tâm Trái Đất.</p>
+                    <p><strong>3. Hiện tượng quay đồng bộ:</strong> Quan trọng hơn, toàn bộ bầu khí quyển và không khí xung quanh cũng đang quay cùng tốc độ với Trái Đất. Giống như khi bạn ngồi trong một chiếc máy bay đang bay êm ru với tốc độ 900 km/h, bạn vẫn đi lại bình thường và không cảm thấy gió thổi bạt người!</p>
+                `,
+                experiment: "🧪 **Thí nghiệm xô nước xoay tròn:** Đổ nước vào nửa xô, buộc dây chắc chắn và xoay xô tròn thật nhanh theo chiều thẳng đứng. Nước sẽ không bị bắn ra ngoài nhờ lực hướng tâm tương tự chuyển động Trái Đất!",
+                flashcard: "💡 Lực hấp dẫn của Trái Đất giữ chặt mọi vật thể không bị văng vào khoảng không vũ trụ khi hành tinh tự quay.",
+                quiz: {
+                    question: "Lực nào giữ con người và đồ vật không bị văng khỏi Trái Đất khi nó tự quay nhanh?",
+                    options: ["Lực từ trường", "Lực hấp dẫn (Trọng lực)", "Lực ma sát", "Lực đẩy không khí"],
+                    correct: 1
+                }
+            },
+            {
+                id: 6,
+                title: "Những đám mây từ đâu ra và tại sao lại có mưa rơi xuống?",
+                category: "Vũ Trụ & Trái Đất",
+                image: "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?auto=format&fit=crop&w=1200&q=80",
+                summary: "Hơi nước bốc lên cao gặp lạnh ngưng tụ thành mây, khi giọt nước tích lại quá to và nặng sẽ rơi xuống thành mưa!",
+                explanation: `
+                    <p><strong>1. Sự bốc hơi nước kỳ diệu:</strong> Ánh nắng Mặt Trời chiếu xuống sông, hồ, đại dương làm nước nóng lên và bốc hơi thành dạng khí không màu bay lên cao bầu trời.</p>
+                    <p><strong>2. Ngưng tụ tạo thành những đám mây:</strong> Càng lên cao không khí càng lạnh. Hơi nước gặp lạnh sẽ ngưng tụ lại quanh các hạt bụi nhỏ lơ lửng, tạo thành vô vàn giọt nước tí hon hoặc tinh thể băng nhỏ. Hàng tỉ tỉ giọt nước kết lại với nhau tạo nên những đám mây xốp trắng bồng bềnh.</p>
+                    <p><strong>3. Quá trình tạo mưa:</strong> Trong đám mây, các giọt nước li ti liên tục va chạm và dính lại với nhau thành giọt lớn hơn. Khi giọt nước trở nên quá to và nặng, lực cản không khí không thể đỡ nổi nữa, chúng sẽ rơi tự do xuống mặt đất tạo thành những cơn mưa mát lành!</p>
+                `,
+                experiment: "🧪 **Tạo mây trong hũ thủy tinh:** Cho nước ấm vào hũ thủy tinh, đậy ngửa nắp hũ lên và đặt vài viên đá lạnh lên nắp. Bạn sẽ thấy hơi nước ngưng tụ thành làn mây mờ ảo ngay bên trong hũ!",
+                flashcard: "💡 Vòng tuần hoạt của nước: Nước bốc hơi -> Gặp lạnh ngưng tụ thành mây -> Giọt nước tụ nặng rơi thành mưa.",
+                quiz: {
+                    question: "Mây trên bầu trời thực chất được tạo thành từ đâu?",
+                    options: ["Bông gòn khổng lồ", "Hơi nước ngưng tụ thành các giọt nước tí hon", "Khói từ các nhà máy", "Bụi vũ trụ"],
+                    correct: 1
+                }
+            },
+            {
+                id: 7,
+                title: "Tại sao bong bóng xà phòng luôn luôn có hình tròn?",
+                category: "Hóa Học Đời Sống",
+                image: "https://images.unsplash.com/photo-1528731708534-816fe59f90cb?auto=format&fit=crop&w=1200&q=80",
+                summary: "Sức căng bề mặt của nước luôn kéo màng xà phòng co lại thành hình có diện tích bề mặt nhỏ nhất: Hình Cầu!",
+                explanation: `
+                    <p><strong>1. Sức căng bề mặt - Chiếc áo co giãn:</strong> Các phân tử nước có tính chất hút chặt lấy nhau, tạo nên một lực gọi là "Sức căng bề mặt". Màng nước xà phòng giống như một tấm màng cao su mỏng co giãn bao bọc lấy khối không khí bên trong.</p>
+                    <p><strong>2. Bài toán tối ưu diện tích của tự nhiên:</strong> Tự nhiên luôn tìm cách tiết kiệm năng lượng nhất. Trong hình học, hình cầu (hình tròn 3D) là hình duy nhất có diện tích bề mặt nhỏ nhất chứa đựng một thể tích không khí lớn nhất.</p>
+                    <p><strong>3. Bí mật khung thổi hình ngôi sao:</strong> Dù em có dùng khung thổi hình tam giác, hình vuông hay hình ngôi sao, thì ngay khi bong bóng rời khỏi khung, sức căng bề mặt lập tức kéo căng đều mọi phía, biến bong bóng thành hình tròn xoe hoàn hảo!</p>
+                `,
+                experiment: "🧪 **Thổi bong bóng hình đặc biệt:** Pha nước rửa chén với ít đường. Uốn dây kẽm thành hình ngôi sao hoặc hình vuông rồi thổi, bạn sẽ bất ngờ khi bong bóng bay ra không trung vẫn tròn quay!",
+                flashcard: "💡 Sức căng bề mặt kéo màng xà phòng co lại thành hình cầu để đạt diện tích bề mặt nhỏ nhất.",
+                quiz: {
+                    question: "Lực nào quyết định màng xà phòng luôn co lại thành hình tròn?",
+                    options: ["Lực ma sát", "Sức căng bề mặt", "Lực đẩy Archimedes", "Trọng lực"],
+                    correct: 1
+                }
+            },
+            {
+                id: 8,
+                title: "Tại sao chúng ta thấy chớp sáng trước khi nghe tiếng sấm?",
+                category: "Vật Lý Kỳ Diệu",
+                image: "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=1200&q=80",
+                summary: "Tia sét và tiếng sấm sinh ra cùng lúc, nhưng ánh sáng di chuyển nhanh gấp gần 1 triệu lần âm thanh!",
+                explanation: `
+                    <p><strong>1. Sét và sấm sinh ra từ một sinh đôi:</strong> Trong các cơn giông bão, các đám mây tích điện phóng điện xuống đất tạo ra tia sét cực mạnh. Sự phóng điện này làm không khí xung quanh nóng lên tức thì (đạt tới 30.000°C), giãn nở đột ngột và nổ tung tạo ra tiếng sấm rền rĩ.</p>
+                    <p><strong>2. Cuộc đua tốc độ giữa Ánh sáng và Âm thanh:</strong> Tia sét (ánh sáng) và tiếng sấm (âm thanh) được sinh ra chính xác tại cùng một thời điểm. Tuy nhiên, ánh sáng di chuyển với vận tốc kỷ lục 300.000 km/s (xuyên qua không gian gần như tức thì).</p>
+                    <p><strong>3. "Chú rùa" âm thanh chậm chạp:</strong> Trong khi đó, âm thanh tiếng sấm chỉ bò lết trong không khí với vận tốc 340 m/s. Vì ánh sáng chạy nhanh hơn âm thanh rất nhiều, mắt chúng ta thấy tia chớp lóe sáng trước, rồi vài giây sau tai mới nghe thấy tiếng sấm đùng đùng nổ ra!</p>
+                `,
+                experiment: "🧪 **Thử tính khoảng cách cơn giông:** Khi thấy tia chớp lóe lên, hãy bắt đầu đếm số giây cho tới khi nghe tiếng sấm. Lấy số giây đếm được chia cho 3, bạn sẽ biết cơn giông bão đang cách mình bao nhiêu kilômét!",
+                flashcard: "💡 Tốc độ ánh sáng (300.000 km/s) nhanh hơn tốc độ âm thanh (340 m/s) rất nhiều nên ta thấy chớp trước tiếng sấm.",
+                quiz: {
+                    question: "Vận tốc truyền đi của ánh sáng trong không khí nhanh khoảng bao nhiêu?",
+                    options: ["340 m/s", "1.000 km/h", "300.000 km/s", "10.000 km/s"],
+                    correct: 2
+                }
+            },
+            {
+                id: 9,
+                title: "Tại sao đom đóm lại phát sáng được mà không bị nóng rát?",
+                category: "Động Vật & Tự Nhiên",
+                image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
+                summary: "Đom đóm tạo ra ánh sáng lạnh nhờ phản ứng hóa học sinh học đạt hiệu suất biến đổi năng lượng gần 100%!",
+                explanation: `
+                    <p><strong>1. Nhà máy hóa học dưới bụng đom đóm:</strong> Dưới bụng của đom đóm có các tế bào phát sáng đặc biệt chứa hai hợp chất hóa học quan trọng: chất <em>Luciferin</em> và enzyme <em>Luciferase</em>.</p>
+                    <p><strong>2. Phản ứng Phát quang sinh học:</strong> Khi đom đóm hít khí Ôxy vào bụng, Ôxy kết hợp với Luciferin dưới sự xúc tác của Luciferase sẽ tạo ra một phản ứng hóa học phát ra chùm ánh sáng màu vàng xanh lung linh.</p>
+                    <p><strong>3. Ánh sáng lạnh thần kỳ:</strong> Bóng đèn điện ở nhà tỏa ra rất nhiều nhiệt gây nóng rát vì bị thất thoát năng lượng. Nhưng ở đom đóm, 100% năng lượng phản ứng được biến đổi thành ánh sáng mà không tỏa ra chút nhiệt lượng nào. Đây gọi là hiện tượng Phát Quang Sinh Học (Bioluminescence)!</p>
+                `,
+                experiment: "🧪 **Quan sát vật dụng dạ quang:** Các thanh que dạ quang dùng trong lễ hội cũng áp dụng phản ứng hóa học trộn chất tạo ra ánh sáng lạnh tự nhiên tương tự đom đóm!",
+                flashcard: "💡 Ánh sáng lạnh của đom đóm đạt hiệu suất biến đổi thành ánh sáng gần 100% nhờ hợp chất Luciferin.",
+                quiz: {
+                    question: "Hợp chất hóa học giúp bụng đom đóm phát sáng kỳ diệu có tên là gì?",
+                    options: ["Luciferin", "Chlorophyll", "Melanin", "Hemoglobin"],
+                    correct: 0
+                }
+            },
+            {
+                id: 10,
+                title: "Tại sao sữa tươi lại biến thành sữa chua vừa ngon vừa bổ?",
+                category: "Hóa Học Đời Sống",
+                image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=1200&q=80",
+                summary: "Các vi khuẩn lactic tí hon hữu ích đã ăn đường sữa và biến nó thành axit lactic đông tụ thơm ngon!",
+                explanation: `
+                    <p><strong>1. Những chiến sĩ vi khuẩn có lợi:</strong> Để biến sữa tươi lỏng thành sữa chua, người ta cho vào sữa một lượng vi khuẩn lên men lactic thân thiện (như <em>Lactobacillus bulgaricus</em>).</p>
+                    <p><strong>2. Quá trình lên men kỳ diệu:</strong> Ở nhiệt độ ấm thích hợp (khoảng 40°C), các chú vi khuẩn này sinh sôi nảy nở, "ăn" đường Lactose có sẵn trong sữa tươi và nhả ra chất mới gọi là Axit Lactic.</p>
+                    <p><strong>3. Sự đông tụ Protein:</strong> Axit Lactic làm cho môi trường sữa trở nên chua dịu. Độ chua này khiến các phân tử Protein (Casein) trong sữa kết chụm lại với nhau, biến sữa từ dạng nước lỏng thành dạng đặc mịn, vừa thơm béo vừa cực kỳ tốt cho đường ruột!</p>
+                `,
+                experiment: "🧪 **Cùng mẹ làm sữa chua:** Trộn sữa đặc, nước ấm và một hũ sữa chua mồi. Ủ ấm trong bình giữ nhiệt 8 tiếng, bạn sẽ thấy hiện tượng sữa lỏng biến hóa thành sữa chua dẻo mịn ngon lành!",
+                flashcard: "💡 Vi khuẩn Lactic chuyển hóa đường Lactose thành Axit Lactic làm protein đông tụ lại thành sữa chua.",
+                quiz: {
+                    question: "Vi khuẩn lên men sữa chua đã biến đổi đường trong sữa tươi thành chất gì?",
+                    options: ["Đường Glucozơ", "Axit Lactic", "Axit Citric", "Vitamin C"],
+                    correct: 1
+                }
+            },
+            {
+                id: 11,
+                title: "Tại sao Mặt Trăng lại biến đổi hình dáng liên tục mỗi đêm?",
+                category: "Vũ Trụ & Trái Đất",
+                image: "https://images.unsplash.com/photo-1532693322450-2cb5c511067d?auto=format&fit=crop&w=1200&q=80",
+                summary: "Mặt Trăng không tự phát sáng, hình dạng thay đổi do góc nhìn phần phản chiếu ánh nắng từ Trái Đất!",
+                explanation: `
+                    <p><strong>1. Mặt Trăng là chiếc gương đá khổng lồ:</strong> Mặt Trăng là một vệ tinh đá không tự phát ra ánh sáng. Những gì chúng ta nhìn thấy vào đêm tối thực chất là ánh nắng Mặt Trời chiếu vào Mặt Trăng rồi phản chiếu xuống Trái Đất.</p>
+                    <p><strong>2. Chuyển động quay tròn:</strong> Mặt Trăng liên tục quay xung quanh Trái Đất theo vồng tròn (mất khoảng 29,5 ngày để đi hết một vòng).</p>
+                    <p><strong>3. Các Pha Mặt Trăng:</strong> Khi Mặt Trăng di chuyển, góc giữa Mặt Trời, Mặt Trăng và Trái Đất liên tục thay đổi. Tùy thuộc vào vị trí, từ Trái Đất chúng ta sẽ nhìn thấy toàn bộ nửa được chiếu sáng (Trăng Tròn), một nửa (Trăng Bán Nguyệt), hay chỉ một viền mỏng (Trăng Lưỡi Liềm)!</p>
+                `,
+                experiment: "🧪 **Mô phỏng các pha Mặt Trăng:** Dùng quả bóng xốp cắm vào que, bật đèn pin cố định đóng vai Mặt Trời. Xoay quả bóng quanh đầu bạn trong phòng tối để thấy hình dạng bóng tối biến đổi hệt như Mặt Trăng!",
+                flashcard: "💡 Pha Mặt Trăng: Hình dạng Mặt Trăng thay đổi do góc nhìn phần phản chiếu ánh nắng Mặt Trời thay đổi theo chu kỳ.",
+                quiz: {
+                    question: "Tại sao quan sát từ Trái Đất ta thấy Mặt Trăng khi tròn khi khuyết?",
+                    options: ["Mặt Trăng bị quái vật cắn", "Do góc nhìn phần được chiếu sáng thay đổi khi Mặt Trăng quay quanh Trái Đất", "Mặt Trăng tự co giãn", "Do mây che khuất bớt"],
+                    correct: 1
+                }
+            },
+            {
+                id: 12,
+                title: "Tại sao rắc muối lại làm tan băng tuyết đóng trên mặt đường?",
+                category: "Hóa Học Đời Sống",
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+                summary: "Muối hòa tan làm hạ thấp điểm đóng băng của nước xuống dưới 0°C khiến lớp băng tuyết tan chảy!",
+                explanation: `
+                    <p><strong>1. Điểm đóng băng của nước tinh khiết:</strong> Ở điều kiện bình thường, nước tinh khiết sẽ bắt đầu đóng thành băng cứng khi nhiệt độ giảm xuống đúng 0°C.</p>
+                    <p><strong>2. Phép thuật của hạt muối (NaCl):</strong> Khi rắc muối lên tuyết hoặc băng, muối sẽ hòa tan vào lớp nước mỏng trên bề mặt, tạo thành dung dịch nước muối. Dung dịch nước muối này có tính chất đặc biệt: điểm đóng băng bị kéo hạ thấp xuống nhiều (có thể xuống -10°C hoặc -20°C mới đóng đá được!).</p>
+                    <p><strong>3. Băng tuyết tan thành nước:</strong> Vì nhiệt độ môi trường xung quanh (vd: -2°C) cao hơn điểm đóng băng mới của nước muối (-10°C), lớp băng tuyết bị "bắt buộc" phải tan chảy ra thành nước lỏng, giúp đường xá an toàn cho xe cộ đi lại!</p>
+                `,
+                experiment: "🧪 **Thử câu đá bằng sợi chỉ:** Đặt viên đá vào ly nước, đặt sợi chỉ lên mặt đá rồi rắc chút muối lên trên sợi chỉ. Đợi 1 phút, bạn có thể nhấc sợi chỉ lên kéo theo viên đá vì nước đá bị tan rồi đông lại giữ chặt sợi chỉ!",
+                flashcard: "💡 Hạ điểm đóng băng: Muối làm giảm nhiệt độ đông đặc của nước xuống dưới 0°C làm băng tan ra.",
+                quiz: {
+                    question: "Nước muối có nhiệt độ đóng băng như thế nào so với nước tinh khiết?",
+                    options: ["Cao hơn 0°C", "Bằng 0°C", "Thấp hơn 0°C", "Không bao giờ đóng băng"],
+                    correct: 2
+                }
+            },
+            {
+                id: 13,
+                title: "Tại sao giọt nước đọng trên lá sen lại tròn vo như hạt ngọc?",
+                category: "Động Vật & Tự Nhiên",
+                image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1200&q=80",
+                summary: "Lớp sáp chống thấm siêu vi trên lá kết hợp sức căng bề mặt tạo nên những giọt ngọc đọng tròn xoe!",
+                explanation: `
+                    <p><strong>1. Cấu trúc siêu vi trên lá sen:</strong> Mặt trên của lá sen được bao phủ bởi hàng triệu nhú gai siêu nhỏ kích thước nanômét và được phủ thêm một lớp sáp tự nhiên chống thấm nước cực đỉnh (gọi là <em>Hiệu ứng lá sen</em>).</p>
+                    <p><strong>2. Sự đẩy lùi nước:</strong> Do các nhú gai và lớp sáp chống thấm, các giọt nước mưa rơi xuống không thể bám dính hay làm ướt bề mặt lá được.</p>
+                    <p><strong>3. Hình thành giọt ngọc tròn:</strong> Dưới tác dụng của sức căng bề mặt, các phân tử nước tự hút chặt lấy nhau và co cụm lại thành hình cầu hoàn hảo. Giọt nước tròn xoe lăn tăn trên lá sen, cuốn sạch mọi bụi bẩn trên đường lăn của nó!</p>
+                `,
+                experiment: "🧪 **Giọt nước trên giấy nến:** Nhỏ vài giọt nước lên tờ giấy nến tráng sáp. Bạn sẽ thấy giọt nước vo tròn xoe lăn qua lăn lại mà không hề làm ướt hay ngấm vào giấy!",
+                flashcard: "💡 Hiệu ứng lá sen: Lớp sáp nano chống thấm khiến nước co cụm thành giọt tròn lăn trên mặt lá.",
+                quiz: {
+                    question: "Lớp chất mỏng nào trên bề mặt lá sen giúp đọng thành giọt nước tròn?",
+                    options: ["Lớp đường", "Lớp sáp nano chống thấm", "Lớp muối", "Lớp dầu ăn"],
+                    correct: 1
+                }
+            },
+            {
+                id: 14,
+                title: "Làm sao hạt mầm nằm trong đất tối om biết vươn lên tìm ánh sáng?",
+                category: "Động Vật & Tự Nhiên",
+                image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=1200&q=80",
+                summary: "Cây xanh có khả năng cảm nhận trọng lực và hormone Auxin giúp ngọn cây uốn cong tìm ánh nắng!",
+                explanation: `
+                    <p><strong>1. Hướng trọng lực - Dẫn đường dưới đất tối:</strong> Khi hạt giống nảy mầm sâu dưới lòng đất tối om, các tế bào cây cảm nhận được lực hấp dẫn Trái Đất. Rễ cây sẽ mọc đâm sâu xuống dưới, còn chồi mầm sẽ dốc sức mọc ngược lên trên.</p>
+                    <p><strong>2. Hormone tăng trưởng Auxin:</strong> Khi ngọn cây nhô lên khỏi mặt đất, một loại hormone thực vật tên là <em>Auxin</em> bắt đầu ra tay. Auxin có tính chất đặc biệt: nó rất "sợ" ánh sáng và dồn về phía bóng râm của thân cây.</p>
+                    <p><strong>3. Uốn cong hướng về ánh sáng:</strong> Phía bóng râm có nhiều Auxin hơn nên các tế bào bên đó phát triển dài ra nhanh hơn phía có nắng. Sự lớn không đều này đẩy ngọn cây uốn cong vươn thẳng về phía có nguồn ánh sáng Mặt Trời (Tính hướng sáng)!</p>
+                `,
+                experiment: "🧪 **Thí nghiệm cây trồng trong hộp:** Trồng hạt đậu trong hộp giấy đục một lỗ nhỏ bên hông. Cây đậu sẽ tự uốn lượn vượt qua các vách ngăn để chui ngọn ra đúng cái lỗ có ánh sáng!",
+                flashcard: "💡 Tính hướng sáng (Phototropism): Hormone Auxin dồn về bóng râm giúp cây uốn cong vươn tới nguồn ánh sáng.",
+                quiz: {
+                    question: "Hormone thực vật nào điều khiển ngọn cây uốn cong vươn về phía ánh sáng?",
+                    options: ["Auxin", "Insulin", "Adrenaline", "Melatonin"],
+                    correct: 0
+                }
+            },
+            {
+                id: 15,
+                title: "Tại sao chúng ta lại hắt hơi và nó bắn ra xa đến như thế?",
+                category: "Hóa Học Đời Sống",
+                image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=1200&q=80",
+                summary: "Hắt hơi là phản xạ bảo vệ của cơ thể nhằm tống khứ bụi bẩn ra ngoài với tốc độ gió bão 160 km/h!",
+                explanation: `
+                    <p><strong>1. Vệ sĩ mũi phát hiện dị vật:</strong> Niêm mạc bên trong mũi của chúng ta chứa hàng ngàn dây thần kinh nhạy cảm. Khi có hạt bụi, vi khuẩn, phấn hoa hay lông động vật cọ xát gây ngứa, mũi sẽ lập tức báo động lên bộ não.</p>
+                    <p><strong>2. Lệnh phản xạ khẩn cấp:</strong> Não bộ lập tức phát lệnh cấp cứu! Phổi sẽ tự động hít một hơi thật sâu, các cơ ngực và cơ bụng co bóp đột ngột, nắp thanh quản đóng lại rồi mở bung ra.</p>
+                    <p><strong>3. Tốc độ gió bão 160 km/h:</strong> Luồng không khí từ phổi được tống mạnh ra khỏi mũi và miệng với tốc độ cực đại lên tới 160 km/h! Cú hắt hơi này có thể bắn hàng ngàn giọt bắn chứa vi khuẩn xa tới 1,5 đến 2 mét để làm sạch hoàn toàn đường hô hấp!</p>
+                `,
+                experiment: "🧪 **Thực hành hành vi văn minh:** Dùng khuỷu tay gập lại hoặc khăn giấy che miệng khi hắt hơi để làm lá chắn ngăn luồng khí phóng vi khuẩn ra môi trường xung quanh nhé!",
+                flashcard: "💡 Hắt hơi là phản xạ tự nhiên của cơ thể để đẩy bụi bẩn ra khỏi đường hô hấp với tốc độ 160 km/h.",
+                quiz: {
+                    question: "Tốc độ luồng khí tống ra khi chúng ta hắt hơi có thể đạt khoảng bao nhiêu?",
+                    options: ["10 km/h", "50 km/h", "160 km/h", "500 km/h"],
+                    correct: 2
+                }
+            }
+        ];
+
+        // Global State Variables
+        let activeCategory = 'Tất cả';
+        let bookmarks = JSON.parse(localStorage.getItem('science_kids_bookmarks') || '[]');
+        let currentModalArticleId = null;
+        let isSpeaking = false;
+        let speechUtterance = null;
+
+        // Quiz Hub State
+        let quizState = {
+            mode: 'easy',
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            streak: 0,
+            timeLeft: 20,
+            timer: null,
+            answered: false
+        };
+
+        // DOM Loaded Init
+        window.onload = function() {
+            renderCategoryButtons();
+            renderArticles();
+            updateBookmarkCount();
+            lucide.createIcons();
+        };
+
+        // Render Category Filter Buttons
+        function renderCategoryButtons() {
+            const categories = ['Tất cả', 'Vũ Trụ & Trái Đất', 'Vật Lý Kỳ Diệu', 'Động Vật & Tự Nhiên', 'Hóa Học Đời Sống'];
+            const container = document.getElementById('categoryButtons');
+            
+            container.innerHTML = categories.map(cat => {
+                const isActive = activeCategory === cat;
+                return `
+                    <button onclick="setCategory('${cat}')" class="px-5 py-2.5 rounded-2xl text-sm sm:text-base font-extrabold whitespace-nowrap transition-all ${
+                        isActive 
+                        ? 'bg-gradient-to-r from-science-blue to-science-cyan text-white shadow-lg shadow-science-cyan/25 border border-science-cyan/50' 
+                        : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/80'
+                    }">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setCategory(cat) {
+            activeCategory = cat;
+            renderCategoryButtons();
+            renderArticles();
+        }
+
+        function resetFilters() {
+            activeCategory = 'Tất cả';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            renderCategoryButtons();
+            renderArticles();
+        }
+
+        // Render Article Cards
+        function renderArticles() {
+            const searchVal = (document.getElementById('searchInput').value || document.getElementById('searchInputMobile').value || '').toLowerCase().trim();
+            const grid = document.getElementById('articleGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            const filtered = articles.filter(art => {
+                const matchCat = activeCategory === 'Tất cả' || art.category === activeCategory;
+                const matchSearch = art.title.toLowerCase().includes(searchVal) || art.summary.toLowerCase().includes(searchVal);
+                return matchCat && matchSearch;
+            });
+
+            document.getElementById('articleCounter').innerText = `Hiển thị ${filtered.length}/15 bài viết`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(art => {
+                const isBookmarked = bookmarks.includes(art.id);
+                return `
+                    <div class="glass-card rounded-3xl overflow-hidden border border-slate-700/70 hover:border-science-cyan/70 transition-all duration-300 flex flex-col group glow-hover">
+                        <div class="relative h-52 sm:h-56 w-full overflow-hidden">
+                            <img src="${art.image}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                            
+                            <span class="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-slate-900/85 backdrop-blur-md border border-slate-700 text-science-cyan font-extrabold text-xs uppercase tracking-wider">
+                                ${art.category}
+                            </span>
+
+                            <button onclick="toggleBookmark(event, ${art.id})" class="absolute top-3.5 right-3.5 p-2.5 rounded-full bg-slate-900/85 border border-slate-700 text-amber-400 hover:scale-110 transition-transform">
+                                <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'fill-amber-400' : ''}"></i>
+                            </button>
+                        </div>
+
+                        <div class="p-6 flex-grow flex flex-col justify-between space-y-4">
+                            <div class="space-y-2.5">
+                                <h3 class="text-lg sm:text-xl font-extrabold text-white group-hover:text-science-cyan transition-colors leading-snug">
+                                    ${art.title}
+                                </h3>
+                                <p class="text-slate-300 text-sm sm:text-base line-clamp-2 leading-relaxed">
+                                    ${art.summary}
+                                </p>
+                            </div>
+
+                            <button onclick="openArticleModal(${art.id})" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-science-blue text-slate-100 hover:text-white font-extrabold text-sm sm:text-base border border-slate-700 hover:border-science-blue transition-all flex items-center justify-center gap-2">
+                                <span>Khám phá bài học</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Search Handlers
+        function handleSearch() {
+            renderArticles();
+        }
+        function handleSearchMobile() {
+            renderArticles();
+        }
+
+        // Bookmark Logic
+        function toggleBookmark(e, id) {
+            if (e) e.stopPropagation();
+            const idx = bookmarks.indexOf(id);
+            if (idx > -1) {
+                bookmarks.splice(idx, 1);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem('science_kids_bookmarks', JSON.stringify(bookmarks));
+            updateBookmarkCount();
+            renderArticles();
+            if (currentModalArticleId === id) {
+                updateModalBookmarkBtn();
+            }
+        }
+
+        function updateBookmarkCount() {
+            document.getElementById('bookmarkCount').innerText = bookmarks.length;
+        }
+
+        function toggleBookmarksModal() {
+            const modal = document.getElementById('bookmarksModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderBookmarksList();
+            }
+        }
+
+        function renderBookmarksList() {
+            const list = document.getElementById('bookmarksList');
+            const bookmarkedArticles = articles.filter(a => bookmarks.includes(a.id));
+
+            if (bookmarkedArticles.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-slate-400 text-base">Chưa có bài viết nào được lưu yêu thích!</div>`;
+                return;
+            }
+
+            list.innerHTML = bookmarkedArticles.map(art => `
+                <div onclick="openArticleModal(${art.id}); toggleBookmarksModal();" class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 hover:border-science-cyan flex items-center gap-4 cursor-pointer transition-colors">
+                    <img src="${art.image}" class="w-20 h-20 rounded-xl object-cover shrink-0">
+                    <div class="flex-grow min-w-0">
+                        <span class="text-xs font-extrabold text-science-cyan uppercase">${art.category}</span>
+                        <h4 class="text-base font-bold text-white truncate">${art.title}</h4>
+                    </div>
+                    <button onclick="toggleBookmark(event, ${art.id}); renderBookmarksList();" class="p-2 text-rose-400 hover:text-rose-300">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Article Modal Full View
+        function openArticleModal(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            currentModalArticleId = id;
+            stopSpeech();
+
+            document.getElementById('modalImage').src = art.image;
+            document.getElementById('modalCategory').innerText = art.category;
+            document.getElementById('modalTitle').innerText = art.title;
+            document.getElementById('modalExplanation').innerHTML = art.explanation;
+            document.getElementById('modalExperiment').innerHTML = art.experiment;
+            document.getElementById('modalFlashcard').innerText = art.flashcard;
+            document.getElementById('modalDidYouKnow').innerText = art.didYouKnow;
+
+            // Individual Mini-Quiz Setup
+            document.getElementById('modalQuizQuestion').innerText = art.quiz.question;
+            const optionsContainer = document.getElementById('modalQuizOptions');
+            const feedback = document.getElementById('modalQuizFeedback');
+            feedback.classList.add('hidden');
+
+            optionsContainer.innerHTML = art.quiz.options.map((opt, idx) => `
+                <button onclick="checkMiniQuiz(${idx}, ${art.quiz.correct})" class="p-4 rounded-2xl bg-slate-800 border border-slate-700 hover:border-science-cyan text-left text-base font-semibold text-slate-200 transition-colors">
+                    ${opt}
+                </button>
+            `).join('');
+
+            updateModalBookmarkBtn();
+            document.getElementById('articleModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeArticleModal() {
+            stopSpeech();
+            document.getElementById('articleModal').classList.add('hidden');
+            currentModalArticleId = null;
+        }
+
+        function openRandomArticle() {
+            const randomArt = articles[Math.floor(Math.random() * articles.length)];
+            openArticleModal(randomArt.id);
+        }
+
+        function updateModalBookmarkBtn() {
+            const isBookmarked = bookmarks.includes(currentModalArticleId);
+            const btn = document.getElementById('modalBookmarkBtn');
+            const txt = document.getElementById('modalBookmarkText');
+            
+            btn.setAttribute('onclick', `toggleBookmark(null, ${currentModalArticleId})`);
+            txt.innerText = isBookmarked ? 'Đã lưu bài' : 'Lưu bài viết';
+        }
+
+        function checkMiniQuiz(selected, correct) {
+            const feedback = document.getElementById('modalQuizFeedback');
+            feedback.classList.remove('hidden', 'bg-emerald-950/80', 'text-emerald-200', 'bg-rose-950/80', 'text-rose-200');
+
+            if (selected === correct) {
+                feedback.classList.add('bg-emerald-950/80', 'text-emerald-200', 'border', 'border-emerald-700/80');
+                feedback.innerHTML = `🎉 Chính xác tuyệt vời! Em giỏi quá!`;
+            } else {
+                feedback.classList.add('bg-rose-950/80', 'text-rose-200', 'border', 'border-rose-700/80');
+                feedback.innerHTML = `❌ Chưa chính xác rồi, hãy thử đọc lại phần giải thích phía trên nhé!`;
+            }
+        }
+
+        // Web Speech API Text-To-Speech
+        function toggleSpeechRead() {
+            if (isSpeaking) {
+                stopSpeech();
+            } else {
+                startSpeech();
+            }
+        }
+
+        function startSpeech() {
+            if (!('speechSynthesis' in window)) {
+                alert('Trình duyệt của em không hỗ trợ đọc giọng nói!');
+                return;
+            }
+            const art = articles.find(a => a.id === currentModalArticleId);
+            if (!art) return;
+
+            // Strip HTML tags for clean text reading
+            const cleanText = art.explanation.replace(/<[^>]*>?/gm, '');
+            const textToRead = `${art.title}. ${cleanText}`;
+            
+            speechUtterance = new SpeechSynthesisUtterance(textToRead);
+            speechUtterance.lang = 'vi-VN';
+            speechUtterance.rate = 0.9;
+
+            speechUtterance.onend = () => stopSpeech();
+            speechUtterance.onerror = () => stopSpeech();
+
+            window.speechSynthesis.speak(speechUtterance);
+            isSpeaking = true;
+            document.getElementById('speechText').innerText = 'Dừng đọc giọng nói';
+        }
+
+        function stopSpeech() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            isSpeaking = false;
+            const el = document.getElementById('speechText');
+            if (el) el.innerText = 'Đọc bài học giọng nói';
+        }
+
+        // TAB SWITCHING
+        function switchTab(tab) {
+            const articlesTab = document.getElementById('articlesTab');
+            const quizTab = document.getElementById('quizTab');
+            const navHomeBtn = document.getElementById('navHomeBtn');
+            const navQuizBtn = document.getElementById('navQuizBtn');
+
+            if (tab === 'home') {
+                articlesTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                navHomeBtn.className = "p-3 rounded-2xl bg-science-cyan/20 border border-science-cyan/40 text-science-cyan transition-all flex items-center gap-2 text-base font-bold";
+                navQuizBtn.className = "p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all flex items-center gap-2 text-base font-bold";
+            } else {
+                articlesTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+                navQuizBtn.className = "p-3 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 transition-all flex items-center gap-2 text-base font-bold";
+                navHomeBtn.className = "p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all flex items-center gap-2 text-base font-bold";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // TAB 2: QUIZ HUB SYSTEM
+        function startQuizMode(mode) {
+            quizState.mode = mode;
+            quizState.currentIndex = 0;
+            quizState.score = 0;
+            quizState.streak = 0;
+            quizState.answered = false;
+
+            let count = mode === 'easy' ? 5 : (mode === 'medium' ? 10 : 15);
+            let shuffled = [...articles].sort(() => 0.5 - Math.random());
+            quizState.questions = shuffled.slice(0, count);
+
+            document.getElementById('quizLevelSelect').classList.add('hidden');
+            document.getElementById('quizArena').classList.remove('hidden');
+            document.getElementById('quizResultSummary').classList.add('hidden');
+
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            clearInterval(quizState.timer);
+            quizState.answered = false;
+
+            const q = quizState.questions[quizState.currentIndex];
+            const total = quizState.questions.length;
+
+            document.getElementById('quizBadgeLevel').innerText = 
+                quizState.mode === 'easy' ? 'Nhà Khám Phá Nhí' : (quizState.mode === 'medium' ? 'Khoa Học Tập Sự' : 'Giáo Sư Nhí');
+            document.getElementById('quizStreak').innerHTML = `<i data-lucide="flame" class="w-4 h-4"></i> Streak: ${quizState.streak}`;
+            document.getElementById('quizProgressText').innerText = `Câu ${quizState.currentIndex + 1}/${total}`;
+            document.getElementById('quizProgressBar').style.width = `${((quizState.currentIndex + 1) / total) * 100}%`;
+            document.getElementById('quizQuestionText').innerText = q.quiz.question;
+
+            document.getElementById('quizArenaFeedback').classList.add('hidden');
+
+            const optsContainer = document.getElementById('quizArenaOptions');
+            optsContainer.innerHTML = q.quiz.options.map((opt, idx) => `
+                <button id="quizOpt_${idx}" onclick="handleQuizAnswer(${idx})" class="p-5 rounded-2xl bg-slate-800/90 border border-slate-700 hover:border-science-cyan text-left text-base text-slate-200 font-bold transition-all hover:bg-slate-700/60 flex items-center gap-4">
+                    <span class="w-8 h-8 rounded-xl bg-slate-700 flex items-center justify-center text-sm font-black shrink-0">${String.fromCharCode(65 + idx)}</span>
+                    <span>${opt}</span>
+                </button>
+            `).join('');
+
+            if (quizState.mode !== 'easy') {
+                quizState.timeLeft = quizState.mode === 'medium' ? 20 : 15;
+                document.getElementById('quizTimerBox').classList.remove('hidden');
+                document.getElementById('quizTimeLeft').innerText = quizState.timeLeft;
+
+                quizState.timer = setInterval(() => {
+                    quizState.timeLeft--;
+                    document.getElementById('quizTimeLeft').innerText = quizState.timeLeft;
+                    if (quizState.timeLeft <= 0) {
+                        clearInterval(quizState.timer);
+                        handleQuizAnswer(-1);
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('quizTimerBox').classList.add('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        function handleQuizAnswer(selectedIdx) {
+            if (quizState.answered) return;
+            quizState.answered = true;
+            clearInterval(quizState.timer);
+
+            const q = quizState.questions[quizState.currentIndex];
+            const isCorrect = selectedIdx === q.quiz.correct;
+
+            q.quiz.options.forEach((_, idx) => {
+                const btn = document.getElementById(`quizOpt_${idx}`);
+                if (btn) {
+                    if (idx === q.quiz.correct) {
+                        btn.className = "p-5 rounded-2xl bg-emerald-950/90 border-2 border-emerald-500 text-emerald-200 font-bold flex items-center gap-4";
+                    } else if (idx === selectedIdx) {
+                        btn.className = "p-5 rounded-2xl bg-rose-950/90 border-2 border-rose-500 text-rose-200 font-bold flex items-center gap-4";
+                    } else {
+                        btn.classList.add('opacity-40');
+                    }
+                }
+            });
+
+            const feedback = document.getElementById('quizArenaFeedback');
+            const content = document.getElementById('quizFeedbackContent');
+            feedback.classList.remove('hidden', 'bg-emerald-950/90', 'bg-rose-950/90');
+
+            if (isCorrect) {
+                quizState.score += 20;
+                quizState.streak++;
+                feedback.classList.add('bg-emerald-950/90', 'border', 'border-emerald-700/80');
+                content.innerHTML = `<i data-lucide="check-circle-2" class="w-7 h-7 text-emerald-400 shrink-0"></i> <span class="text-emerald-200 text-lg">Chính xác tuyệt vời! (+20 điểm)</span>`;
+            } else {
+                quizState.streak = 0;
+                feedback.classList.add('bg-rose-950/90', 'border', 'border-rose-700/80');
+                content.innerHTML = `<i data-lucide="x-circle" class="w-7 h-7 text-rose-400 shrink-0"></i> <span class="text-rose-200 text-lg">${selectedIdx === -1 ? 'Hết giờ mất rồi!' : 'Chưa chính xác!'} Đáp án đúng là: <strong>${q.quiz.options[q.quiz.correct]}</strong></span>`;
+            }
+
+            lucide.createIcons();
+        }
+
+        function nextQuizQuestion() {
+            quizState.currentIndex++;
+            if (quizState.currentIndex < quizState.questions.length) {
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizArena').classList.add('hidden');
+            const summary = document.getElementById('quizResultSummary');
+            summary.classList.remove('hidden');
+
+            const total = quizState.questions.length * 20;
+            document.getElementById('quizScoreText').innerText = `Em đạt ${quizState.score}/${total} điểm trắc nghiệm!`;
+
+            let badge = "🏆 Huy Hiệu: Nhà Khám Phá Nhí Tích Cực!";
+            if (quizState.score >= total * 0.8) {
+                badge = "🌟 Huy Hiệu: Giáo Sư Khoa Học Siêu Trí Tuệ!";
+            } else if (quizState.score >= total * 0.5) {
+                badge = "⚡ Huy Hiệu: Khoa Học Tập Sự Xuất Sắc!";
+            }
+            document.getElementById('quizBadgeAward').innerText = badge;
+        }
+
+        function resetQuizHub() {
+            document.getElementById('quizResultSummary').classList.add('hidden');
+            document.getElementById('quizLevelSelect').classList.remove('hidden');
+        }
+
+        // TAB 3: AI TUTOR "DR. SPARK" DYNAMIC GENERATIVE REASONING ENGINE
+        function toggleAiTutorModal() {
+            const modal = document.getElementById('aiTutorModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('aiChatInput').focus();
+            }
+        }
+
+        function sendQuickQuestion(questionText) {
+            document.getElementById('aiChatInput').value = questionText;
+            handleAiChatSubmit(new Event('submit'));
+        }
+
+        function handleAiChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('aiChatInput');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+
+            // Render User Message
+            chatMessages.innerHTML += `
+                <div class="flex items-start justify-end gap-3">
+                    <div class="bg-science-blue/90 text-white rounded-3xl rounded-tr-none p-4 text-base sm:text-lg font-semibold max-w-[85%] shadow-md">
+                        ${query}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Generate AI Response Dynamically
+            setTimeout(() => {
+                const aiReply = generateDrSparkReply(query);
+                chatMessages.innerHTML += `
+                    <div class="flex items-start gap-3.5">
+                        <div class="w-9 h-9 rounded-2xl bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0 border border-purple-500/40">
+                            <i data-lucide="bot" class="w-5 h-5"></i>
+                        </div>
+                        <div class="bg-slate-800/90 border border-slate-700/80 rounded-3xl rounded-tl-none p-5 text-base sm:text-lg text-slate-200 leading-relaxed max-w-[85%] space-y-3 shadow-lg">
+                            ${aiReply}
+                        </div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                lucide.createIcons();
+            }, 350);
+        }
+
+        // DYNAMIC RESPONSIVE GENERATIVE ENGINE FOR DR. SPARK
+        function generateDrSparkReply(userInput) {
+            const text = userInput.toLowerCase();
+
+            // 1. Social Greetings & Introduction
+            if (/^(hello|hi|helo|hêlol|xin chào|chào|chào thầy|alô|ơi|dr spark)/i.test(text)) {
+                return `Chào em nè! 🚀 Thầy <strong>Dr. Spark</strong> rất vui được gặp em! Hôm nay em có thắc mắc gì về thế giới tự nhiên, vũ trụ bao la hay cơ thể con người không? Cứ thoải mái hỏi thầy bất cứ điều gì nhé!`;
+            }
+
+            // 2. Questions about Biển / Nước biển
+            if (text.includes("mặn") || text.includes("biển") || text.includes("đại dương")) {
+                return `
+                    <p>Chào em! 🌊 Nước biển mặn là vì qua hàng triệu năm, các cơn mưa rơi xuống đất hòa tan chất khoáng và muối từ đất đá. Sông suối sau đó chảy gom toàn bộ lượng muối này đổ ra đại dương.</p>
+                    <p>Khi nắng chiếu xuống làm nước biển bốc hơi lên trời, muối nặng hơn nên vẫn ở lại dưới biển, khiến nước biển ngày càng tích tụ mặn hơn đấy em!</p>
+                    <p>✨ <em>Bí mật nhỏ: Em có biết đại dương nào trên Trái Đất có độ mặn cao nhất không? Thử đoán xem nhé!</em></p>
+                `;
+            }
+
+            // 3. Questions about Trái Đất quay / Ngã
+            if (text.includes("quay") || text.includes("ngã") || text.includes("văng")) {
+                return `
+                    <p>Trái Đất quay rất nhanh (hơn 1.600 km/h) nhưng chúng ta không bị văng nhờ Lực Hấp Dẫn kéo ta chặt về phía tâm! 🌍</p>
+                    <p>Đồng thời, toàn bộ lớp không khí xung quanh cũng quay đồng tốc độ với chúng ta. Giống như khi em ngồi yên trên ô tô đang chạy êm ru, em sẽ không cảm thấy mình đang bị chuyển động đâu!</p>
+                `;
+            }
+
+            // 4. Questions about Chim bay / Con người
+            if (text.includes("chim") || text.includes("bay")) {
+                return `
+                    <p>Chim bay được vì xương của chúng cực kỳ nhẹ và xốp, cơ ngực siêu khỏe và bộ lông vũ tạo thành đôi cánh lướt gió (cấu tạo khí động học)! 🐦</p>
+                    <p>Con người chúng ta xương nặng hơn và không có đôi cánh đặc biệt để lướt gió, nên chúng ta chọn cách chạy nhảy thông minh trên mặt đất đấy em!</p>
+                `;
+            }
+
+            // 5. Questions about Mây / Mưa
+            if (text.includes("mây") || text.includes("mưa")) {
+                return `
+                    <p>Nắng Mặt Trời làm nước ở sông biển bốc hơi lên không trung. Càng lên cao không khí càng lạnh, hơi nước ngưng tụ lại thành hàng tỉ giọt nước nhỏ li ti kết thành mây! ☁️</p>
+                    <p>Khi các giọt nước trong mây tụ lại quá to và nặng, không khí không đỡ nổi nữa sẽ rơi tự do xuống đất tạo thành những cơn mưa mát lành đấy!</p>
+                `;
+            }
+
+            // 6. Questions about Băng nổi / Nước đá
+            if (text.includes("băng") || text.includes("nổi") || text.includes("đá")) {
+                return `
+                    <p>Băng nổi trên nước vì khi đóng băng, các phân tử nước sắp xếp dãn ra tạo cấu trúc xốp có nhiều khoảng trống hơn. 🧊</p>
+                    <p>Vì thế, cùng một thể tích nhưng băng nhẹ hơn nước lỏng, giúp nó tự tin nổi bồng bềnh trên mặt nước đấy em!</p>
+                `;
+            }
+
+            // 7. Questions about Lá cây xanh / Diệp lục
+                    if (text.includes("lá") || text.includes("xanh") || text.includes("cây")) {
+                return `
+                    <p>Lá cây có màu xanh nhờ chứa vô số hạt phẩm màu tự nhiên tên là Diệp Lục (Chlorophyll). 🍃</p>
+                    <p>Diệp lục hấp thụ ánh nắng Mặt Trời để chế tạo thức ăn nuôi cây, và phản chiếu lại ánh sáng màu xanh lá vào mắt chúng ta!</p>
+                `;
+            }
+
+            // 8. Questions about Cầu vồng
+            if (text.includes("cầu vồng")) {
+                return `
+                    <p>Sau cơn mưa, vô số giọt nước nhỏ đọng lại trong không khí đóng vai trò như những chiếc lăng kính tí hon! 🌈</p>
+                    <p>Ánh nắng Mặt Trời chiếu qua giọt nước bị bẻ cong và tách thành 7 dải màu lộng lẫy: Đỏ, Cam, Vàng, Lục, Lam, Chàm, Tím đấy em!</p>
+                `;
+            }
+
+            // 9. Questions about Đom đóm
+            if (text.includes("đom đóm") || text.includes("phát sáng")) {
+                return `
+                    <p>Đom đóm phát sáng nhờ phản ứng hóa học giữa chất Luciferin và Ôxy dưới bụng của chúng! 💡</p>
+                    <p>Đặc biệt, đây là "Ánh sáng lạnh" vì 100% năng lượng biến thành ánh sáng mà không hề tỏa nhiệt gây nóng rát tẹo nào!</p>
+                `;
+            }
+
+            // 10. General Dynamic AI Reasoning Response (No static template)
+            return `
+                <p>À há! Thắc mắc về "<strong>${userInput}</strong>" của em chứa đựng một bí mật khoa học vô cùng thú vị đấy! 🧪</p>
+                <p>Về bản chất, các hiện tượng xung quanh chúng ta đều hoạt động dựa trên các quy luật Vật lý, Hóa học hoặc sự thích nghi kỳ diệu của sinh vật tự nhiên. Em có thể khám phá chi tiết thêm trong 15 bài học trên Science Kids hoặc đặt cho thầy Dr. Spark một câu hỏi cụ thể hơn nữa nhé! ✨</p>
+            `;
+        }
+    </script>
+</body>
+</html>
