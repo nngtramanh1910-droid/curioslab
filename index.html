@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Science Kids - Khám Phá Thế Giới Kỳ Diệu</title>
+    <title>ROTANH LAB - Khám Phá Thế Giới Kỳ Diệu</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -70,9 +70,47 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #06b6d4;
         }
-    </style>
+/* ===== ADDITIONS ===== */
+.scrollbar-none{scrollbar-width:none}.scrollbar-none::-webkit-scrollbar{display:none}
+.animate-spin-slow{animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(32px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes shine{to{background-position:200% center}}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes dots{0%,80%,100%{transform:scale(.5);opacity:.4}40%{transform:scale(1);opacity:1}}
+@keyframes popModal{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.reveal{opacity:0}.reveal.in{opacity:1;animation:riseIn .8s cubic-bezier(.2,.7,.2,1) backwards}
+.pop-modal{animation:popModal .35s cubic-bezier(.2,.8,.2,1)}
+.msg-in{animation:msgIn .35s ease both}
+.hero-h1{min-height:2.6em}
+.hero-in>*{animation:riseIn .8s cubic-bezier(.2,.7,.2,1) backwards}
+.hero-in>*:nth-child(2){animation-delay:.12s}.hero-in>*:nth-child(3){animation-delay:.24s}.hero-in>*:nth-child(4){animation-delay:.36s}
+.shine-text{background-size:200% auto;animation:shine 4s linear infinite}
+.caret{display:inline-block;width:3px;height:.9em;margin-left:4px;background:#22d3ee;vertical-align:-.08em;animation:blink 1s steps(1) infinite}
+.atom{position:relative;width:280px;height:280px;animation:floaty 6s ease-in-out infinite}
+.ring{position:absolute;inset:0;border:1.5px solid rgba(34,211,238,.4);border-radius:50%;transform:rotate(var(--r)) scaleY(.36)}
+.ring .sp{position:absolute;inset:0;animation:spin var(--t) linear infinite}
+.ring .sp::after{content:"";position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--c);box-shadow:0 0 16px var(--c)}
+.nucleus{position:absolute;inset:50%;width:44px;height:44px;margin:-22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fde68a,#f59e0b 60%,#b45309);box-shadow:0 0 50px rgba(245,158,11,.6)}
+.marquee{display:flex;width:max-content;animation:marquee 32s linear infinite}.marquee:hover{animation-play-state:paused}
+.fld{width:100%;padding:.75rem 1rem;border-radius:1rem;background:rgba(15,23,42,.9);border:1px solid #334155;color:#f1f5f9;font-size:1rem;outline:none;transition:.2s}
+.fld:focus{border-color:#06b6d4;box-shadow:0 0 0 3px rgba(6,182,212,.25)}.fld.bad{border-color:#f43f5e;box-shadow:0 0 0 3px rgba(244,63,94,.2)}
+select.fld option{background:#0f172a}
+.lbl{display:block;font-weight:800;font-size:.9rem;color:#e2e8f0;margin-bottom:.4rem}.lbl small{font-weight:500;color:#94a3b8}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+#cursorGlow{position:fixed;left:0;top:0;width:400px;height:400px;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(6,182,212,.13),transparent 65%);transition:transform .15s ease-out}
+#scrollBar{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,#0284c7,#06b6d4,#10b981,#f59e0b)}
+main,footer{position:relative;z-index:1}
+.dot3 i{display:inline-block;width:8px;height:8px;margin:0 2px;border-radius:50%;background:#c4b5fd;animation:dots 1.2s infinite}.dot3 i:nth-child(2){animation-delay:.15s}.dot3 i:nth-child(3){animation-delay:.3s}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+    </style>    </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-science-cyan selection:text-science-900">
+<canvas id="bgCanvas"></canvas><div id="cursorGlow"></div><div id="scrollBar"></div>
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-24 opacity-0 transition-all duration-500 z-[70] px-6 py-3.5 rounded-2xl bg-emerald-500 text-slate-950 font-extrabold shadow-2xl"></div>
 
     <!-- Header Navigation -->
     <header class="sticky top-0 z-40 glass-nav transition-all duration-300">
@@ -83,7 +121,7 @@
                     <i data-lucide="atom" class="w-7 h-7 text-white animate-spin-slow"></i>
                 </div>
                 <div>
-                    <span class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300 bg-clip-text text-transparent tracking-tight">Science Kids</span>
+                    <span class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300 bg-clip-text text-transparent tracking-tight">ROTANH LAB</span>
                     <span class="block text-xs font-bold text-sky-400 tracking-wider uppercase">Khám Phá Thế Giới Kỳ Diệu</span>
                 </div>
             </div>
@@ -112,6 +150,7 @@
                     <i data-lucide="bot" class="w-5 h-5"></i>
                     <span class="hidden sm:inline">Hỏi Dr. Spark</span>
                 </button>
+                <button onclick="openPostModal()" class="p-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 transition-all shadow-lg shadow-emerald-500/25 flex items-center gap-2 text-base font-extrabold" title="Đăng bài viết mới"><i data-lucide="pen-line" class="w-5 h-5"></i><span class="hidden sm:inline">Đăng Bài</span></button>
                 <button onclick="toggleBookmarksModal()" class="relative p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-all flex items-center gap-2">
                     <i data-lucide="bookmark" class="w-5 h-5 text-amber-400"></i>
                     <span id="bookmarkCount" class="absolute -top-1 -right-1 bg-amber-500 text-slate-950 font-black text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-md">0</span>
@@ -136,14 +175,15 @@
             <section class="relative rounded-3xl overflow-hidden glass-card p-6 sm:p-10 lg:p-12 border border-slate-700/60 shadow-2xl">
                 <div class="absolute -right-10 -top-10 w-96 h-96 bg-science-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
                 <div class="absolute -left-10 -bottom-10 w-96 h-96 bg-science-blue/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="hidden lg:block absolute right-20 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true"><div class="atom"><div class="ring" style="--r:0deg;--t:5s;--c:#22d3ee"><div class="sp"></div></div><div class="ring" style="--r:60deg;--t:7s;--c:#34d399"><div class="sp"></div></div><div class="ring" style="--r:120deg;--t:6s;--c:#f472b6"><div class="sp"></div></div><div class="nucleus"></div></div></div>
                 
-                <div class="relative z-10 max-w-3xl space-y-5">
+                <div class="relative z-10 max-w-3xl space-y-5 hero-in">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-science-cyan/15 border border-science-cyan/40 text-science-cyan text-sm font-extrabold uppercase tracking-wider">
                         <i data-lucide="sparkles" class="w-4 h-4"></i>
                         Dành Cho Các Nhà Khoa Học Nhí Tò Mò
                     </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
-                        Giải mã 15 bí ẩn kỳ diệu <br><span class="bg-gradient-to-r from-cyan-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent">vũ trụ & tự nhiên quanh em</span>
+                    <h1 class="hero-h1 text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
+                        Giải mã <span id="heroCount">những</span> bí ẩn kỳ diệu <br><span class="shine-text bg-gradient-to-r from-cyan-400 via-sky-300 to-emerald-400 bg-clip-text text-transparent"><span id="typeTarget">vũ trụ & tự nhiên quanh em</span><span class="caret"></span></span>
                     </h1>
                     <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
                         Mỗi câu hỏi "Vì sao?" là một chìa khóa mở ra thế giới kiến thức rực rỡ. Hãy chọn bài viết ưa thích để khám phá bài giảng chi tiết, tự làm thí nghiệm vui tại nhà và đấu trí trắc nghiệm nhé!
@@ -157,6 +197,7 @@
                             <i data-lucide="trophy" class="w-5 h-5"></i>
                             <span>Đấu Trắc Nghiệm</span>
                         </button>
+                        <button onclick="openPostModal()" class="px-6 py-3 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 font-extrabold text-base transition-all flex items-center gap-2"><i data-lucide="pen-line" class="w-5 h-5"></i><span>Đăng bài của em</span></button>
                         <button onclick="toggleAiTutorModal()" class="px-6 py-3 rounded-2xl bg-purple-600/30 text-purple-300 border border-purple-500/40 hover:bg-purple-600/40 font-extrabold text-base transition-all flex items-center gap-2">
                             <i data-lucide="bot" class="w-5 h-5"></i>
                             <span>Hỏi Dr. Spark</span>
@@ -164,6 +205,15 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Stats & Marquee -->
+            <section class="reveal grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card rounded-3xl p-5 text-center"><i data-lucide="book-open" class="w-7 h-7 mx-auto text-science-cyan"></i><div class="text-3xl font-black mt-2" id="statArticles">15</div><div class="text-sm text-slate-300 font-semibold">Bài học</div></div>
+                <div class="glass-card rounded-3xl p-5 text-center"><i data-lucide="compass" class="w-7 h-7 mx-auto text-emerald-400"></i><div class="text-3xl font-black mt-2" id="statTopics">4</div><div class="text-sm text-slate-300 font-semibold">Chủ đề</div></div>
+                <div class="glass-card rounded-3xl p-5 text-center"><i data-lucide="trophy" class="w-7 h-7 mx-auto text-amber-400"></i><div class="text-3xl font-black mt-2" id="statQuiz">15</div><div class="text-sm text-slate-300 font-semibold">Câu trắc nghiệm</div></div>
+                <div class="glass-card rounded-3xl p-5 text-center"><i data-lucide="users" class="w-7 h-7 mx-auto text-pink-400"></i><div class="text-3xl font-black mt-2" id="statUser">0</div><div class="text-sm text-slate-300 font-semibold">Bài do em đăng</div></div>
+            </section>
+            <div class="reveal overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 py-3" aria-hidden="true"><div class="marquee text-slate-300 font-bold text-base" id="marquee"></div></div>
 
             <!-- Category Filters -->
             <section class="space-y-4">
@@ -240,7 +290,7 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold text-white">Giáo Sư Nhí Super</h3>
-                            <p class="text-slate-300 text-sm mt-1">Trọn bộ 15 câu hỏi • 15 giây đếm ngược</p>
+                            <p class="text-slate-300 text-sm mt-1">Trọn bộ câu hỏi trong thư viện • 15 giây đếm ngược</p>
                         </div>
                         <span class="inline-block px-3.5 py-1.5 bg-purple-500/15 text-purple-400 text-xs font-bold rounded-xl border border-purple-500/30">Cấp Độ Khó</span>
                     </div>
@@ -432,7 +482,7 @@
                         <i data-lucide="bot" class="w-5 h-5"></i>
                     </div>
                     <div class="bg-slate-800/90 border border-slate-700/80 rounded-3xl rounded-tl-none p-5 text-base sm:text-lg text-slate-200 leading-relaxed max-w-[88%] space-y-2">
-                        Xin chào bạn nhỏ! Thầy là <strong>Dr. Spark</strong> 🚀. Thầy ам hiểu tường tận mọi bí mật từ lòng đại dương cho tới vũ trụ bao la! Em có thắc mắc gì hôm nay muốn hỏi thầy không?
+                        Xin chào bạn nhỏ! Thầy là <strong>Dr. Spark</strong> 🚀. Thầy am hiểu tường tận mọi bí mật từ lòng đại dương cho tới vũ trụ bao la! Em có thắc mắc gì hôm nay muốn hỏi thầy không?
                     </div>
                 </div>
             </div>
@@ -464,6 +514,49 @@
         </div>
     </div>
 
+    <!-- POST MODAL -->
+    <div id="postModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 hidden">
+        <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md" onclick="closePostModal()"></div>
+        <div class="relative w-full max-w-3xl max-h-[92vh] bg-slate-900 border border-emerald-500/40 rounded-3xl shadow-2xl z-10 flex flex-col overflow-hidden pop-modal">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-emerald-500/15 to-transparent">
+                <div class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center"><i data-lucide="pen-line" class="w-6 h-6 text-slate-950"></i></div>
+                <div><h3 class="text-xl font-black text-white">Đăng bài viết mới</h3><p class="text-xs text-emerald-300 font-semibold">Chia sẻ điều kỳ diệu em vừa khám phá</p></div></div>
+                <button type="button" onclick="closePostModal()" class="p-2.5 rounded-2xl bg-slate-800 text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <form id="postForm" onsubmit="submitPost(event)" novalidate class="overflow-y-auto p-6 sm:p-8 space-y-8">
+                <section class="space-y-4"><h4 class="font-black text-lg text-science-cyan">1 · Thông tin chung</h4>
+                    <div><label class="lbl" for="pTitle">Tiêu đề câu hỏi <small>(vd: Tại sao ...?)</small></label><input id="pTitle" maxlength="120" class="fld" placeholder="Tại sao ..."></div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div><label class="lbl" for="pCategory">Chủ đề</label><select id="pCategory" class="fld"><option>Vũ Trụ & Trái Đất</option><option>Vật Lý Kỳ Diệu</option><option>Động Vật & Tự Nhiên</option><option>Hóa Học Đời Sống</option></select></div>
+                        <div><label class="lbl" for="pImageFile">Ảnh minh họa <small>(không bắt buộc)</small></label><input id="pImageFile" type="file" accept="image/*" onchange="pickImage(this)" class="fld text-sm file:mr-3 file:rounded-xl file:border-0 file:bg-science-blue file:px-3 file:py-1.5 file:text-white file:font-bold"></div>
+                    </div>
+                    <div><label class="lbl" for="pImageUrl">hoặc dán link ảnh <small>(https://...)</small></label><input id="pImageUrl" class="fld" placeholder="https://..." oninput="pendingImage='';showPreview(this.value)"></div>
+                    <img id="pPreview" class="hidden w-full h-44 object-cover rounded-2xl border border-slate-700" alt="">
+                    <div><label class="lbl" for="pSummary">Tóm tắt ngắn <small id="cSum">0/220</small></label><textarea id="pSummary" maxlength="220" rows="2" class="fld" placeholder="1-2 câu hấp dẫn hiện trên thẻ bài viết"></textarea></div>
+                </section>
+                <section class="space-y-4"><h4 class="font-black text-lg text-amber-400">2 · Giải thích khoa học</h4>
+                    <div><label class="lbl" for="pExplain">Nội dung chi tiết <small>(cách đoạn bằng dòng trống, dùng **chữ đậm**)</small></label><textarea id="pExplain" rows="7" class="fld" placeholder="1. Ý đầu tiên...&#10;&#10;2. Ý thứ hai..."></textarea></div>
+                    <div><label class="lbl" for="pExperiment">🧪 Thử nghiệm nhỏ tại nhà</label><textarea id="pExperiment" rows="3" class="fld" placeholder="Chuẩn bị gì, làm thế nào, quan sát điều gì?"></textarea></div>
+                </section>
+                <section class="space-y-4"><h4 class="font-black text-lg text-pink-400">3 · Ghi nhớ & mẹo hay</h4>
+                    <div><label class="lbl" for="pFlash">💡 Thẻ ghi nhớ thần kỳ <small>(1 câu tóm ý chính)</small></label><input id="pFlash" class="fld"></div>
+                    <div><label class="lbl" for="pDyk">✦ Bạn có biết?</label><textarea id="pDyk" rows="2" class="fld"></textarea></div>
+                </section>
+                <section class="space-y-4"><h4 class="font-black text-lg text-purple-400">4 · Câu hỏi trắc nghiệm</h4>
+                    <div><label class="lbl" for="pQuestion">Câu hỏi</label><input id="pQuestion" class="fld"></div>
+                    <div class="space-y-3"><span class="lbl">4 đáp án <small>(chọn nút tròn ở đáp án đúng)</small></span>
+                    <div class="flex items-center gap-3"><input type="radio" name="pCorrect" value="0" checked class="w-5 h-5 accent-emerald-400 shrink-0"><input id="pOpt0" class="fld" placeholder="Đáp án A"></div><div class="flex items-center gap-3"><input type="radio" name="pCorrect" value="1"  class="w-5 h-5 accent-emerald-400 shrink-0"><input id="pOpt1" class="fld" placeholder="Đáp án B"></div><div class="flex items-center gap-3"><input type="radio" name="pCorrect" value="2"  class="w-5 h-5 accent-emerald-400 shrink-0"><input id="pOpt2" class="fld" placeholder="Đáp án C"></div><div class="flex items-center gap-3"><input type="radio" name="pCorrect" value="3"  class="w-5 h-5 accent-emerald-400 shrink-0"><input id="pOpt3" class="fld" placeholder="Đáp án D"></div>
+                    </div>
+                </section>
+            </form>
+            <div class="px-6 py-4 border-t border-slate-800 flex items-center justify-between gap-3 bg-slate-900">
+                <span id="postErr" class="text-rose-400 text-sm font-bold"></span>
+                <div class="flex gap-3 shrink-0"><button type="button" onclick="closePostModal()" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 font-bold">Hủy</button>
+                <button type="submit" form="postForm" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black flex items-center gap-2 hover:scale-105 transition-transform"><i data-lucide="send" class="w-5 h-5"></i>Đăng bài</button></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bookmarks Drawer Modal -->
     <div id="bookmarksModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
         <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm" onclick="toggleBookmarksModal()"></div>
@@ -490,13 +583,13 @@
                 <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-science-blue to-science-cyan flex items-center justify-center">
                     <i data-lucide="atom" class="w-6 h-6 text-white"></i>
                 </div>
-                <span class="text-xl font-black text-white">Science Kids</span>
+                <span class="text-xl font-black text-white">ROTANH LAB</span>
             </div>
             <p class="text-slate-300 text-sm sm:text-base max-w-md mx-auto">
                 Khơi nguồn đam mê khoa học và tính tò mò khám phá thế giới cho trẻ em Việt Nam mỗi ngày.
             </p>
             <div class="text-slate-500 text-xs sm:text-sm">
-                © 2026 Science Kids - Khám Phá Thế Giới Kỳ Diệu. Built for curious young minds.
+                © 2026 ROTANH LAB - Khám Phá Thế Giới Kỳ Diệu. Built for curious young minds.
             </div>
         </div>
     </footer>
@@ -867,7 +960,7 @@
                 return matchCat && matchSearch;
             });
 
-            document.getElementById('articleCounter').innerText = `Hiển thị ${filtered.length}/15 bài viết`;
+            document.getElementById('articleCounter').innerText = `Hiển thị ${filtered.length}/${articles.length} bài viết`;
 
             if (filtered.length === 0) {
                 grid.innerHTML = '';
@@ -888,6 +981,7 @@
                                 ${art.category}
                             </span>
 
+                            ${art.userPost ? `<span class="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-xs font-black">✍️ Bài của em</span><button onclick="deletePost(event, ${art.id})" title="Xóa bài" class="absolute bottom-3 right-3 p-2 rounded-full bg-slate-900/85 border border-slate-700 text-rose-400 hover:scale-110 transition-transform"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                             <button onclick="toggleBookmark(event, ${art.id})" class="absolute top-3.5 right-3.5 p-2.5 rounded-full bg-slate-900/85 border border-slate-700 text-amber-400 hover:scale-110 transition-transform">
                                 <i data-lucide="bookmark" class="w-4 h-4 ${isBookmarked ? 'fill-amber-400' : ''}"></i>
                             </button>
@@ -913,6 +1007,7 @@
             }).join('');
 
             lucide.createIcons();
+            if (window.afterRender) afterRender();
         }
 
         // Search Handlers
@@ -1114,7 +1209,7 @@
             quizState.streak = 0;
             quizState.answered = false;
 
-            let count = mode === 'easy' ? 5 : (mode === 'medium' ? 10 : 15);
+            let count = mode === 'easy' ? 5 : (mode === 'medium' ? 10 : articles.length);
             let shuffled = [...articles].sort(() => 0.5 - Math.random());
             quizState.questions = shuffled.slice(0, count);
 
@@ -1367,9 +1462,248 @@
             // 10. General Dynamic AI Reasoning Response (No static template)
             return `
                 <p>À há! Thắc mắc về "<strong>${userInput}</strong>" của em chứa đựng một bí mật khoa học vô cùng thú vị đấy! 🧪</p>
-                <p>Về bản chất, các hiện tượng xung quanh chúng ta đều hoạt động dựa trên các quy luật Vật lý, Hóa học hoặc sự thích nghi kỳ diệu của sinh vật tự nhiên. Em có thể khám phá chi tiết thêm trong 15 bài học trên Science Kids hoặc đặt cho thầy Dr. Spark một câu hỏi cụ thể hơn nữa nhé! ✨</p>
+                <p>Về bản chất, các hiện tượng xung quanh chúng ta đều hoạt động dựa trên các quy luật Vật lý, Hóa học hoặc sự thích nghi kỳ diệu của sinh vật tự nhiên. Em có thể khám phá chi tiết thêm trong 15 bài học trên ROTANH LAB hoặc đặt cho thầy Dr. Spark một câu hỏi cụ thể hơn nữa nhé! ✨</p>
             `;
         }
     </script>
+<script>
+/* ================= ADDITIONS: POSTING + ANIMATIONS + SMART AI ================= */
+const $ = s => document.querySelector(s);
+const POSTS_KEY = 'science_kids_posts';
+let pendingImage = '';
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const clean = s => String(s).replace(/[<>"]/g, m => m === '"' ? '”' : '').trim();
+const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+const plain = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+/* ---------- Load saved user posts before first render ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+    try { articles.unshift(...JSON.parse(localStorage.getItem(POSTS_KEY) || '[]')); } catch (e) {}
+    $('#marquee').innerHTML = [...Array(2)].map(() => ['🌌 Vũ Trụ & Trái Đất','⚡ Vật Lý Kỳ Diệu','🐾 Động Vật & Tự Nhiên','🧪 Hóa Học Đời Sống','🚀 Hỏi Dr. Spark','🏆 Đấu Trắc Nghiệm','✍️ Đăng Bài Của Em'].map(t => `<span class="mx-6 whitespace-nowrap">${t}</span><span class="text-science-cyan">✦</span>`).join('')).join('');
+    updateStats(); startTypewriter(); initBackground(); initReveal();
+});
+
+function countUp(el, to) {
+    const s = performance.now();
+    (function f(n) { const k = Math.min((n - s) / 1100, 1); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(s);
+}
+function updateStats() {
+    countUp($('#heroCount'), articles.length); countUp($('#statArticles'), articles.length); countUp($('#statQuiz'), articles.length);
+    countUp($('#statTopics'), 4); countUp($('#statUser'), articles.filter(a => a.userPost).length);
+}
+
+/* ---------- Animations ---------- */
+function startTypewriter() {
+    const words = ['vũ trụ & tự nhiên quanh em', 'những hiện tượng kỳ diệu', 'thế giới sinh vật muôn màu', 'hóa học trong đời sống'];
+    let wi = 0, ci = words[0].length, del = true;
+    (function tick() {
+        const t = $('#typeTarget'), w = words[wi];
+        ci += del ? -1 : 1; t.textContent = w.slice(0, ci);
+        let d = del ? 35 : 70;
+        if (!del && ci === w.length) { del = true; d = 2000; }
+        else if (del && ci === 0) { del = false; wi = (wi + 1) % words.length; d = 300; }
+        setTimeout(tick, d);
+    })();
+}
+let io;
+function initReveal() {
+    io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    const grid = $('#articleGrid');
+    grid.addEventListener('mousemove', e => {
+        const c = e.target.closest('#articleGrid > div'); if (!c) return;
+        const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        c.style.transform = `perspective(800px) rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateY(-4px)`;
+    });
+    grid.addEventListener('mouseout', e => { const c = e.target.closest('#articleGrid > div'); if (c && !c.contains(e.relatedTarget)) c.style.transform = ''; });
+}
+function afterRender() {
+    if (!io) return;
+    document.querySelectorAll('#articleGrid > div').forEach((c, i) => { c.classList.remove('in'); c.classList.add('reveal'); c.style.animationDelay = (i % 3) * 90 + 'ms'; io.observe(c); });
+}
+function initBackground() {
+    const glow = $('#cursorGlow'), bar = $('#scrollBar');
+    addEventListener('scroll', () => { const h = document.documentElement; bar.style.width = (scrollY / ((h.scrollHeight - innerHeight) || 1) * 100) + '%'; }, { passive: true });
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = $('#bgCanvas'), cx = cv.getContext('2d'); let W, H, P = [], mx = -999, my = -999;
+    const size = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; P = Array.from({ length: Math.min(70, Math.floor(W * H / 20000)) }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35, r: Math.random() * 1.8 + .6 })); };
+    size(); addEventListener('resize', size);
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; glow.style.transform = `translate(${mx - 200}px,${my - 200}px)`; });
+    (function frame() {
+        if (!document.hidden) {
+            cx.clearRect(0, 0, W, H);
+            for (const p of P) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > W) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1;
+                const dx = p.x - mx, dy = p.y - my; if (dx * dx + dy * dy < 14000) { p.x += dx * .01; p.y += dy * .01; }
+                cx.fillStyle = 'rgba(125,211,252,.65)'; cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.283); cx.fill(); }
+            for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) {
+                const d = Math.hypot(P[i].x - P[j].x, P[i].y - P[j].y);
+                if (d < 130) { cx.strokeStyle = `rgba(56,189,248,${.16 * (1 - d / 130)})`; cx.beginPath(); cx.moveTo(P[i].x, P[i].y); cx.lineTo(P[j].x, P[j].y); cx.stroke(); } }
+        }
+        requestAnimationFrame(frame);
+    })();
+}
+function toast(msg) {
+    const t = $('#toast'); t.textContent = msg; t.classList.remove('translate-y-24', 'opacity-0');
+    clearTimeout(t._h); t._h = setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3200);
+}
+
+/* ---------- Posting ---------- */
+function openPostModal() { $('#postModal').classList.remove('hidden'); $('#postErr').textContent = ''; lucide.createIcons(); setTimeout(() => $('#pTitle').focus(), 50); }
+function closePostModal() { $('#postModal').classList.add('hidden'); }
+function showPreview(src) { const p = $('#pPreview'); if (src) { p.src = src; p.classList.remove('hidden'); } else p.classList.add('hidden'); }
+function pickImage(inp) {
+    const f = inp.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => { const im = new Image(); im.onload = () => {
+        const k = Math.min(1, 1000 / im.width), c = document.createElement('canvas'); c.width = im.width * k; c.height = im.height * k;
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); pendingImage = c.toDataURL('image/jpeg', .78); $('#pImageUrl').value = ''; showPreview(pendingImage);
+    }; im.src = rd.result; };
+    rd.readAsDataURL(f);
+}
+function defaultCover(cat) {
+    const em = { 'Vũ Trụ & Trái Đất': '🌌', 'Vật Lý Kỳ Diệu': '⚡', 'Động Vật & Tự Nhiên': '🐾', 'Hóa Học Đời Sống': '🧪' }[cat] || '🔬';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0284c7"/><stop offset=".6" stop-color="#06b6d4"/><stop offset="1" stop-color="#10b981"/></linearGradient></defs><rect width="1200" height="700" fill="url(#g)"/><text x="600" y="420" font-size="260" text-anchor="middle">${em}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+$('#pSummary').addEventListener('input', e => $('#cSum').textContent = e.target.value.length + '/220');
+function submitPost(e) {
+    e.preventDefault();
+    const v = id => $('#' + id).value.trim();
+    const rules = [['pTitle', 10, 'Tiêu đề cần ít nhất 10 ký tự'], ['pSummary', 20, 'Tóm tắt cần ít nhất 20 ký tự'], ['pExplain', 40, 'Phần giải thích cần ít nhất 40 ký tự'], ['pExperiment', 10, 'Hãy mô tả thử nghiệm nhỏ'], ['pFlash', 10, 'Thẻ ghi nhớ cần ít nhất 10 ký tự'], ['pDyk', 10, 'Hãy điền mục "Bạn có biết?"'], ['pQuestion', 8, 'Hãy nhập câu hỏi trắc nghiệm'], ['pOpt0', 1, 'Cần đủ 4 đáp án'], ['pOpt1', 1, 'Cần đủ 4 đáp án'], ['pOpt2', 1, 'Cần đủ 4 đáp án'], ['pOpt3', 1, 'Cần đủ 4 đáp án']];
+    let first = null;
+    rules.forEach(([id, min, msg]) => { const bad = v(id).length < min; $('#' + id).classList.toggle('bad', bad); if (bad && !first) first = [id, msg]; });
+    if (first) { $('#postErr').textContent = '⚠ ' + first[1]; $('#' + first[0]).scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#' + first[0]).focus(); return; }
+    const cat = $('#pCategory').value, url = v('pImageUrl');
+    const art = {
+        id: Math.max(0, ...articles.map(a => a.id)) + 1,
+        title: clean(v('pTitle')), category: cat,
+        image: pendingImage || (/^https?:\/\//i.test(url) ? url : defaultCover(cat)),
+        summary: clean(v('pSummary')),
+        explanation: v('pExplain').split(/\n\s*\n/).map(p => `<p>${inline(p.trim())}</p>`).join(''),
+        experiment: '🧪 ' + inline(v('pExperiment')),
+        flashcard: '💡 ' + clean(v('pFlash')), didYouKnow: clean(v('pDyk')),
+        quiz: { question: clean(v('pQuestion')), options: [0, 1, 2, 3].map(i => clean(v('pOpt' + i))), correct: +document.querySelector('input[name=pCorrect]:checked').value },
+        userPost: true
+    };
+    articles.unshift(art);
+    try { const s = JSON.parse(localStorage.getItem(POSTS_KEY) || '[]'); s.unshift(art); localStorage.setItem(POSTS_KEY, JSON.stringify(s)); toast('🎉 Đăng bài thành công!'); }
+    catch (err) { toast('Đã đăng, nhưng bộ nhớ trình duyệt đầy nên bài sẽ mất khi tải lại'); }
+    $('#postForm').reset(); pendingImage = ''; showPreview(''); $('#cSum').textContent = '0/220';
+    closePostModal(); switchTab('home'); resetFilters(); updateStats();
+    setTimeout(() => $('#articleGrid').scrollIntoView({ behavior: 'smooth' }), 150);
+}
+function deletePost(e, id) {
+    e.stopPropagation(); if (!confirm('Xóa bài viết này?')) return;
+    articles.splice(articles.findIndex(a => a.id === id), 1);
+    try { localStorage.setItem(POSTS_KEY, JSON.stringify(JSON.parse(localStorage.getItem(POSTS_KEY) || '[]').filter(a => a.id !== id))); } catch (x) {}
+    bookmarks = bookmarks.filter(b => b !== id); localStorage.setItem('science_kids_bookmarks', JSON.stringify(bookmarks));
+    updateBookmarkCount(); renderArticles(); updateStats(); toast('Đã xóa bài viết');
+}
+
+/* ---------- Dr. Spark 2.0 : tìm kiếm thông minh trong kho bài + kiến thức bổ sung ---------- */
+const STOP = new Set('tai sao vi la gi the nao co khong nhu ma va cua cho em thay oi a nhe hay duoc lai o trong khi ay nay do de con cai nhung it nhieu rat roi se da dang bi tu den hoi biet muon xin ban toi minh nhi vay chu'.split(' '));
+const KB = [
+    { k: ['mat troi'], a: 'Mặt Trời là một ngôi sao khổng lồ toàn khí nóng, to gấp hơn <strong>1 triệu lần</strong> Trái Đất! Nó cho ta ánh sáng và nhiệt nhờ phản ứng hợp nhất hạt nhân ở tâm. Ánh sáng Mặt Trời đi mất khoảng <strong>8 phút</strong> mới tới Trái Đất. ☀️' },
+    { k: ['mat trang', 'trang tron', 'trang khuyet'], a: 'Mặt Trăng không tự phát sáng mà phản chiếu ánh sáng Mặt Trời. Ta thấy trăng tròn hay khuyết vì nhìn phần được chiếu sáng của nó ở những góc khác nhau khi nó quay quanh Trái Đất (khoảng 29,5 ngày). 🌙' },
+    { k: ['nui lua'], a: 'Sâu dưới lòng đất có đá nóng chảy gọi là <strong>macma</strong>. Khi áp suất đủ lớn, macma phun lên qua miệng núi lửa thành dung nham, khói và tro bụi. 🌋' },
+    { k: ['sam set', 'tieng sam', 'chop'], a: 'Chớp là tia lửa điện khổng lồ giữa các đám mây. Nó làm không khí nóng bừng và nở ra cực nhanh tạo thành tiếng nổ là <strong>sấm</strong>. Ánh sáng đi nhanh hơn âm thanh nên ta thấy chớp trước khi nghe sấm! ⚡' },
+    { k: ['trong luc', 'luc hap dan', 'qua tao'], a: 'Trọng lực là lực hút giữa các vật có khối lượng. Trái Đất rất nặng nên kéo mọi thứ về phía tâm của nó, vì vậy quả táo rơi xuống chứ không bay lên! 🍎' },
+    { k: ['trai tim', 'nhip tim', 'tim dap'], a: 'Trái tim em to cỡ nắm tay, làm việc không nghỉ để bơm máu đi khắp cơ thể. Mỗi ngày tim đập khoảng <strong>100.000 lần</strong>! ❤️' },
+    { k: ['bo xuong', 'xuong cot', 'bao nhieu xuong'], a: 'Người lớn có <strong>206</strong> chiếc xương, còn em bé có hơn 300 chiếc. Khi lớn lên, nhiều xương nhỏ dính lại với nhau. 🦴' },
+    { k: ['dong dat'], a: 'Vỏ Trái Đất gồm các mảng lớn trôi rất chậm. Khi chúng cọ vào nhau, năng lượng tích tụ rồi bất ngờ giải phóng làm mặt đất rung chuyển. 🌍' },
+    { k: ['thuy trieu', 'trieu cuong'], a: 'Lực hấp dẫn của Mặt Trăng kéo nước biển về phía nó, làm nước dâng lên (triều lên) rồi rút xuống (triều xuống) mỗi ngày. 🌊' },
+    { k: ['nam cham', 'tu truong'], a: 'Nam châm tạo ra từ trường hút sắt. Hai cực cùng tên thì đẩy nhau, khác tên thì hút nhau. Trái Đất cũng là một nam châm khổng lồ nên la bàn luôn chỉ hướng Bắc! 🧲' },
+    { k: ['am thanh', 'tieng vang'], a: 'Âm thanh là sóng rung động lan truyền qua không khí đến tai em. Ngoài không gian không có không khí nên <strong>không nghe được âm thanh</strong>. Tiếng vang là âm thanh dội lại khi gặp vật cản. 🔊' },
+    { k: ['dong dien', 'o cam dien'], a: 'Dòng điện là sự chuyển động của vô số hạt electron nhỏ xíu trong dây dẫn. Nhớ nhé: không chọc vật vào ổ điện và không để nước gần điện! ⚠️' },
+    { k: ['khung long'], a: 'Khủng long tuyệt chủng cách đây khoảng <strong>66 triệu năm</strong>, nhiều khả năng do một thiên thạch lớn rơi xuống Trái Đất. Chim ngày nay là hậu duệ của một nhóm khủng long đó! 🦖' },
+    { k: ['ngoi sao', 'thien ha', 'vu tru', 'hanh tinh', 'ho den'], a: 'Vũ trụ chứa hàng trăm tỉ thiên hà, mỗi thiên hà có hàng trăm tỉ ngôi sao. Sao thấy lấp lánh vì ánh sáng đi qua lớp khí quyển luôn rung rinh trước khi tới mắt em. ✨' },
+    { k: ['giac ngu', 'buon ngu', 'di ngu', 'giac mo'], a: 'Khi ngủ, cơ thể được nghỉ ngơi và sửa chữa, não sắp xếp lại ký ức, và hormone giúp em cao lên cũng hoạt động mạnh. Trẻ em nên ngủ khoảng <strong>9-11 tiếng</strong> mỗi đêm. 😴' },
+    { k: ['ngon lua', 'lua chay', 'dap lua'], a: 'Lửa cần đủ 3 thứ: <strong>nhiên liệu, ôxy và nhiệt</strong>. Thiếu một thứ là lửa tắt, vì thế người ta dùng chăn hoặc bình chữa cháy để ngăn ôxy. 🔥 An toàn nhất: gặp lửa hãy báo người lớn ngay nhé!' }
+];
+let sparkLast = null, sparkBusy = false;
+const arts = () => articles.map(a => ({ a, t: norm(a.title), s: norm(a.summary + ' ' + a.flashcard), b: norm(plain(a.explanation) + ' ' + a.didYouKnow + ' ' + plain(a.experiment) + ' ' + a.category) }));
+function searchAI(q) {
+    const nq = norm(q), toks = nq.split(' ').filter(t => t.length > 1 && !STOP.has(t)), res = [];
+    arts().forEach(({ a, t, s, b }) => {
+        let sc = 0;
+        toks.forEach((w, i) => { const re = new RegExp('(^| )' + w + '( |$)'); if (re.test(t)) sc += 4; if (re.test(s)) sc += 2; if (re.test(b)) sc += 1;
+            if (i < toks.length - 1) { const bg = w + ' ' + toks[i + 1]; if (t.includes(bg)) sc += 6; else if (s.includes(bg) || b.includes(bg)) sc += 3; } });
+        if (sc >= 6) res.push({ type: 'art', a, sc });
+    });
+    KB.forEach(e => { const hit = e.k.find(k => (' ' + nq + ' ').includes(' ' + k + ' ')); if (hit) res.push({ type: 'kb', e, sc: 8 + hit.length / 4 }); });
+    return res.sort((x, y) => y.sc - x.sc);
+}
+const chip = (l, q, o, p) => ({ l, q, o, p });
+function sparkAnswer(q) {
+    const n = norm(q);
+    if (/^(hello|hi|hey|helo|xin chao|chao|alo)\b/.test(n)) return { h: 'Chào em nè! 🚀 Thầy <strong>Dr. Spark</strong> rất vui được gặp em! Em muốn khám phá điều gì hôm nay?', c: [chip('🎲 Cho thầy một bài ngẫu nhiên', 'bài ngẫu nhiên'), chip('🧠 Đố thầy đi', 'đố em'), chip('🌋 Núi lửa phun thế nào?', 'núi lửa')] };
+    if (/cam on|thank/.test(n)) return { h: 'Không có gì đâu em! 😊 Tò mò là siêu năng lực của nhà khoa học. Em còn muốn hỏi gì nữa không?' };
+    if (/ban la ai|thay la ai|ten gi|dr spark la/.test(n)) return { h: 'Thầy là <strong>Dr. Spark</strong> 🤖, trợ lý khoa học của ROTANH LAB. Thầy tìm câu trả lời trong ' + articles.length + ' bài học (kể cả bài các bạn đăng), còn biết thêm nhiều chuyện hay về vũ trụ, cơ thể và thiên nhiên!' };
+    const mt = q.replace(/[x×]/g, '*').replace(/[:÷]/g, '/').replace(/=|bang may|\?/gi, '').trim();
+    if (/^[\d\s+\-*/().]+$/.test(mt) && /\d\s*[+\-*/]\s*\d/.test(mt)) { try { const r = Function('"use strict";return (' + mt + ')')(); if (isFinite(r)) return { h: `🧮 ${esc(mt)} = <strong>${+r.toFixed(4)}</strong>. Toán học cũng là một ngôn ngữ của khoa học đấy em!` }; } catch (x) {} }
+    if (/do (thay|em|toi|minh)|choi (do|quiz)|cau do|quiz|kiem tra/.test(n)) {
+        const a = articles[Math.floor(Math.random() * articles.length)];
+        return { h: `🧠 <strong>Câu đố:</strong> ${esc(a.quiz.question)}<div class="grid gap-2 mt-3">` + a.quiz.options.map((o, i) => `<button onclick="sparkQuiz(${a.id},${i},this)" class="text-left px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 hover:border-purple-400 transition-colors font-semibold">${esc(o)}</button>`).join('') + '</div>' };
+    }
+    if (sparkLast) {
+        const a = articles.find(x => x.id === sparkLast);
+        if (a && /thi nghiem|thuc hanh|lam thu/.test(n)) return { h: a.experiment, c: [chip('🤯 Bạn có biết?', 'bạn có biết thêm'), chip('📖 Mở bài đầy đủ', '', a.id)] };
+        if (a && /ban co biet|thu vi|noi them|them nua|ke them|tiep|con gi nua/.test(n)) return { h: '🤯 <strong>Bạn có biết?</strong> ' + esc(a.didYouKnow), c: [chip('🧪 Thí nghiệm tại nhà', 'thí nghiệm'), chip('🧠 Đố thầy đi', 'đố em')] };
+        if (a && /chi tiet|bai day du|mo bai|giai thich ky/.test(n)) return { h: 'Thầy mở bài học đầy đủ cho em nhé! 📖', open: a.id };
+    }
+    if (/ngau nhien|bat ky|tuy thay|dieu gi do/.test(n)) return articleReply(articles[Math.floor(Math.random() * articles.length)], 'Thầy chọn cho em điều này nè 🎲 ');
+    const r = searchAI(q);
+    if (r.length) {
+        const top = r[0], rel = r.filter(x => x.type === 'art' && x !== top).slice(0, 2);
+        const relChips = rel.map(x => chip('📚 ' + x.a.title.replace(/\?$/, '').slice(0, 38), x.a.title));
+        if (top.type === 'art') { const o = articleReply(top.a, ''); o.c = o.c.concat(relChips); return o; }
+        return { h: top.e.a, c: [chip('🧠 Đố thầy đi', 'đố em'), ...relChips] };
+    }
+    const rnd = [...articles].sort(() => Math.random() - .5).slice(0, 3);
+    return { h: `Hmm, câu hỏi "<strong>${esc(q)}</strong>" thầy chưa có sẵn câu trả lời rồi 🤔. Em thử hỏi bằng từ khóa ngắn hơn (vd: "cầu vồng", "núi lửa", "tim") hoặc chọn một chủ đề dưới đây nhé. Nếu em biết câu trả lời, hãy <strong>đăng bài</strong> để chia sẻ với mọi người! ✍️`, c: rnd.map(x => chip('📚 ' + x.title.replace(/\?$/, '').slice(0, 38), x.title)).concat([chip('✍️ Đăng bài', '', 0, 'post')]) };
+}
+function articleReply(a, pre) {
+    sparkLast = a.id;
+    let first = plain((a.explanation.match(/<p>.*?<\/p>/s) || [a.explanation])[0]); if (first.length > 260) first = first.slice(0, 260).replace(/[^.!?]*$/, '') || first.slice(0, 260) + '…';
+    return { h: `${pre}📖 <strong>${esc(a.title)}</strong><br><br>${esc(first)}<br><br><em>${esc(a.flashcard)}</em>`, c: [chip('🧪 Thí nghiệm tại nhà', 'thí nghiệm'), chip('🤯 Bạn có biết?', 'bạn có biết thêm'), chip('📖 Mở bài đầy đủ', '', a.id)] };
+}
+function sparkOpen(id) { toggleAiTutorModal(); openArticleModal(id); }
+function sparkQuiz(id, i, btn) {
+    const a = articles.find(x => x.id === id), ok = i === a.quiz.correct;
+    [...btn.parentNode.children].forEach((b, k) => { b.disabled = true; if (k === a.quiz.correct) b.className += ' !border-emerald-400 !bg-emerald-500/20'; });
+    if (!ok) btn.className += ' !border-rose-400 !bg-rose-500/20';
+    sparkLast = id; addBot(ok ? '🎉 <strong>Chính xác!</strong> Em giỏi quá! ' + esc(a.flashcard) : `😅 Chưa đúng rồi, đáp án là <strong>${esc(a.quiz.options[a.quiz.correct])}</strong>. ${esc(a.flashcard)}`, [chip('🧠 Câu đố khác', 'đố em'), chip('📖 Xem bài học', '', id)]);
+}
+function chatScroll() { const m = $('#chatMessages'); m.scrollTop = m.scrollHeight; }
+function addBot(html, chips = [], opts = {}) {
+    const m = $('#chatMessages'), row = document.createElement('div'); row.className = 'flex items-start gap-3.5 msg-in';
+    row.innerHTML = '<div class="w-9 h-9 rounded-2xl bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0 border border-purple-500/40"><i data-lucide="bot" class="w-5 h-5"></i></div><div class="bubble bg-slate-800/90 border border-slate-700/80 rounded-3xl rounded-tl-none p-5 text-base sm:text-lg text-slate-200 leading-relaxed max-w-[88%] space-y-2 shadow-lg"><div class="dot3"><i></i><i></i><i></i></div></div>';
+    m.appendChild(row); lucide.createIcons(); chatScroll();
+    const bub = row.querySelector('.bubble'); sparkBusy = true;
+    const len = plain(html).length;
+    setTimeout(() => {
+        bub.innerHTML = '<div class="body">' + html + '</div>';
+        const body = bub.firstChild, walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT), nodes = [];
+        while (walker.nextNode()) nodes.push([walker.currentNode, walker.currentNode.nodeValue]);
+        nodes.forEach(([n]) => n.nodeValue = '');
+        let ni = 0, ci = 0, timer;
+        const finish = () => { clearInterval(timer); nodes.forEach(([n, t]) => n.nodeValue = t); sparkBusy = false; chatScroll();
+            if (chips.length) { const c = document.createElement('div'); c.className = 'flex flex-wrap gap-2 pt-2'; c.innerHTML = chips.map(x => `<button onclick="${x.o ? 'sparkOpen(' + x.o + ')' : x.p ? 'toggleAiTutorModal();openPostModal()' : 'sendQuickQuestion(' + JSON.stringify(x.q).replace(/"/g, '&quot;') + ')'}" class="px-3.5 py-1.5 rounded-full bg-purple-900/40 hover:bg-purple-700/60 border border-purple-500/40 text-purple-200 text-sm font-bold transition-colors">${esc(x.l)}</button>`).join(''); bub.appendChild(c); chatScroll(); } };
+        bub.onclick = finish;
+        timer = setInterval(() => { for (let k = 0; k < 4 && ni < nodes.length; k++) { const t = nodes[ni][1]; ci++; nodes[ni][0].nodeValue = t.slice(0, ci); if (ci >= t.length) { ni++; ci = 0; } } chatScroll(); if (ni >= nodes.length) finish(); }, 16);
+        if (opts.open) setTimeout(() => sparkOpen(opts.open), len * 4 + 600);
+    }, Math.min(1100, 450 + len * 2));
+}
+function handleAiChatSubmit(e) {
+    e.preventDefault();
+    const input = $('#aiChatInput'), q = input.value.trim(); if (!q || sparkBusy) return;
+    const m = $('#chatMessages');
+    m.insertAdjacentHTML('beforeend', `<div class="flex items-start justify-end gap-3 msg-in"><div class="bg-science-blue/90 text-white rounded-3xl rounded-tr-none p-4 text-base sm:text-lg font-semibold max-w-[85%] shadow-md">${esc(q)}</div></div>`);
+    input.value = ''; chatScroll();
+    const r = sparkAnswer(q); addBot(r.h, r.c || [], { open: r.open });
+}
+
+</script>
 </body>
 </html>
